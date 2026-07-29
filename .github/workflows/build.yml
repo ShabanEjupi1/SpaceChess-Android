@@ -1,0 +1,98 @@
+name: Ndërto dhe ngarko
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: AAB + APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Pa `gradle-wrapper.jar` në depo me qëllim: një JAR binar i pashikueshëm
+      # që ekzekutohet në çdo ndërtim është pikërisht ajo që kjo shtëpi shmang.
+      # Gradle-ja vjen nga veprimi zyrtar, me version të fiksuar.
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Vendos çelësin e nënshkrimit
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::warning::Pa ANDROID_KEYSTORE_BASE64 — ndërtim i panënshkruar."
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/upload.jks"
+          cat > key.properties <<EOF
+          storeFile=$GITHUB_WORKSPACE/upload.jks
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+          # `secrets` nuk lexohet te `if` i një hapi; kushti duhet të kalojë
+          # përmes $GITHUB_ENV ose kontrolli i mëposhtëm kapërcehet në heshtje.
+          echo "SIGNED=true" >> "$GITHUB_ENV"
+
+      - name: Ndërto
+        run: gradle --no-daemon :app:bundleRelease :app:assembleRelease
+
+      - name: Kontrollo se AAB-ja NUK është nënshkruar me çelësin e debug-ut
+        if: env.SIGNED == 'true'
+        run: |
+          AAB=app/build/outputs/bundle/release/app-release.aab
+          if keytool -printcert -jarfile "$AAB" | grep -q 'CN=Android Debug'; then
+            echo "::error::AAB-ja u nënshkrua me çelësin e DEBUG-ut."
+            exit 1
+          fi
+          keytool -printcert -jarfile "$AAB" | grep -E 'Owner|SHA256'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: |
+            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+
+  play:
+    name: Play (gjurma e brendshme)
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: android
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: android
+          path: dist
+
+      - name: Ngarko te Play
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::warning::Pa PLAY_SERVICE_ACCOUNT_JSON — ngarkimi te Play u kapërcye."
+            exit 0
+          fi
+          printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/play.json"
+          node tools/play.mjs "$RUNNER_TEMP/play.json" ngarko \
+            tech.spacecode.chess \
+            dist/bundle/release/app-release.aab \
+            internal
+          rm -f "$RUNNER_TEMP/play.json"

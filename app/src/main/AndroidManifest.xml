@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- E vetmja leje: pa internet nuk ka çka të hapet. Loja kundër kompjuterit
+         punon edhe pa rrjet, por vetëm sepse punëtori i shërbimit e ka ruajtur
+         faqen që më parë. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:supportsRtl="true">
+
+        <!-- Lidhja me faqen. Pa këtë deklarim — dhe pa gjurmën përkatëse te
+             https://chess.spacecode.tech/.well-known/assetlinks.json — Chrome-i
+             NUK e beson aplikacionin dhe e hap faqen me shirit adrese sipër, si
+             një skedë e zakonshme. Kjo është dallimi i vetëm i dukshëm mes një
+             TWA-je të verifikuar dhe një të paverifikuari. -->
+        <meta-data
+            android:name="asset_statements"
+            android:resource="@string/asset_statements"/>
+
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+
+            <meta-data
+                android:name="android.support.customtabs.trusted.DEFAULT_URL"
+                android:value="https://chess.spacecode.tech/"/>
+
+            <meta-data
+                android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
+                android:resource="@color/backgroundColor"/>
+            <meta-data
+                android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR"
+                android:resource="@color/backgroundColor"/>
+
+            <!-- Ekrani i nisjes: pa të, mes prekjes së ikonës dhe kornizës së
+                 parë të Chrome-it duket një dritare bosh. -->
+            <meta-data
+                android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
+                android:resource="@drawable/splash"/>
+            <meta-data
+                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
+                android:resource="@color/backgroundColor"/>
+            <meta-data
+                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
+                android:value="300"/>
+            <meta-data
+                android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
+                android:value="tech.spacecode.chess.fileprovider"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="chess.spacecode.tech"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.FocusActivity"
+            android:exported="false"/>
+
+        <!-- Rruga e dytë: telefonat pa Chrome (ose me një shfletues që nuk di
+             TWA) e hapin lojën në një WebView në vend që të mos e hapin fare. -->
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.WebViewFallbackActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|layoutDirection|keyboard|keyboardHidden"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="tech.spacecode.chess.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"/>
+        </provider>
+
+        <service
+            android:name="com.google.androidbrowserhelper.trusted.DelegationService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

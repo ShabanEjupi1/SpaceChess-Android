@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- I njëjti qymyr i ngrohtë si faqja (static/style.css) dhe si
+         `theme_color` i manifestit — shiriti i statusit dhe ekrani i nisjes
+         nuk duhet të jenë një ngjyrë tjetër nga loja. -->
+    <color name="backgroundColor">#302e2b</color>
+    <color name="ic_launcher_background">#302e2b</color>
+</resources>
