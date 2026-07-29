@@ -1,0 +1,35 @@
+name: spacechess
+description: "SpaceChess — shah kundër kompjuterit dhe online, në çdo pajisje."
+publish_to: 'none'
+
+# 1.0.0+1 ishte mbështjellësi TWA (një skedë Chrome-i me ikonë). Ky është
+# aplikacioni i vërtetë, ndaj versioni i dukshëm nis nga 2.0.0 — por numri i
+# ndërtimit vazhdon nga aty ku e la, sepse Play-i nuk e pranon kurrë dy herë të
+# njëjtin versionCode.
+version: 2.0.0+2
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 🔑 Rregullat dhe kompjuteri. Dart i pastër, i provuar me perft.
+  spacechess_engine:
+    path: ../engine
+
+  # Vetëm dy të tjera. Figurat vizatohen me `CustomPainter`, jo me imazhe as me
+  # shkronja shahu: glifet Unicode ♞♝♜ nuk gjenden te Roboto-ja dhe në disa
+  # pajisje Android dalin katrorë bosh — një aplikacion shahu ku figurat mund të
+  # mos shfaqen fare nuk është aplikacion shahu.
+  http: ^1.2.0
+  shared_preferences: ^2.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Qymyri i ngrohtë i paletës së SpaceChess-it (static/style.css). Sfondi i
+     ikonës adaptive duhet të jetë ngjyrë e plotë: Android-i e zmadmon dhe e pret
+     në forma të ndryshme sipas nisësit, dhe një sfond me figurë del i prerë. -->
+<resources>
+    <color name="ic_launcher_background">#302E2B</color>
+</resources>
