@@ -107,6 +107,124 @@ if (cmd === 'kontrollo') {
   await call(`${API}/applications/${pkg}/edits/${edit.id}:commit`, { method: 'POST' });
   console.log(`✓ u krye: ${pkg} ${bundle.versionCode} → ${track}`);
 
+} else if (cmd === 'promovo') {
+  // Ngjit një versionCode që EKZISTON te një gjurmë tjetër, pa e ringarkuar.
+  //
+  //   node play.mjs <çelësi.json> promovo <paketa> <versionCode> <gjurma>
+  //
+  // 🔑 Kjo është e vetmja mënyrë nga këtu për të nisur orën e testimit të mbyllur:
+  // `internal` NUK numërohet për rregullin «12 testues × 14 ditë» dhe as nuk e nxjerr
+  // aplikacionin nga gjendja «Draft», sepse është e vetmja gjurmë që Google-i s'e shqyrton.
+  // `alpha` (= testim i mbyllur) po.
+  //
+  // 🚨 `:commit` dështon nëse ndonjë detyrë e Console-it mungon (listimi, klasifikimi i
+  // përmbajtjes, Data safety, deklarimi i reklamave…). Ky dështim është INFORMATA që
+  // duam: teksti i gabimit i emërton pikërisht ato që kanë mbetur.
+  if (!aabPath) throw new Error('mungon versionCode');
+
+  const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
+  await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks/${track}`, {
+    method: 'PUT',
+    json: {
+      track,
+      releases: [{
+        status: 'completed',
+        versionCodes: [String(aabPath)],
+        releaseNotes: [{ language: 'sq', text: 'Version i parë për testim.' }],
+      }],
+    },
+  });
+  await call(`${API}/applications/${pkg}/edits/${edit.id}:commit`, { method: 'POST' });
+  console.log(`✓ ${pkg} ${aabPath} → ${track}`);
+
+} else if (cmd === 'listimi') {
+  // Ngjit TË GJITHË listimin nga një skedar: kontaktet, tekstet për çdo gjuhë, dhe
+  // figurat (ikona, grafika, pamjet). Kjo është pjesa e madhe e «Draft»-it që API-ja
+  // DI ta bëjë — dhe ishte bosh te të dy aplikacionet (0/0 shkronja).
+  //
+  //   node play.mjs <çelësi.json> listimi <paketa> <listimi.json>
+  //
+  // Shtigjet e figurave lexohen relativisht ndaj vetë skedarit JSON.
+  // ⛔ ÇKA NUK BËN DOT API-ja, dhe mbetet me dorë te Console-i: klasifikimi i
+  //    përmbajtjes (IARC), «Siguria e të dhënave», publiku i synuar, deklarimi i
+  //    reklamave, shtetet, dhe çmimi. Pa ato aplikacioni rri «Draft» edhe me listim
+  //    të plotë — ndaj mos e lexo suksesin këtu si «u publikua».
+  if (!aabPath) throw new Error('mungon listimi.json');
+
+  const { dirname, resolve } = await import('node:path');
+  const conf = JSON.parse(readFileSync(aabPath, 'utf8'));
+  const base = dirname(resolve(aabPath));
+
+  const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
+
+  // 🔑 Tekstet SHKOJNË TË PARAT. `details.defaultLanguage` refuzohet nëse listimi i asaj
+  // gjuhe nuk ekziston ende, dhe të dyja janë brenda të njëjtit `edit` — pra rendi këtu,
+  // jo dy ekzekutime, është ajo që e bën shqipen gjuhë të parazgjedhur.
+  for (const [lang, l] of Object.entries(conf.listings ?? {})) {
+    await call(`${API}/applications/${pkg}/edits/${edit.id}/listings/${lang}`, {
+      method: 'PUT',
+      json: {
+        language: lang,
+        title: l.title,
+        shortDescription: l.shortDescription,
+        fullDescription: l.fullDescription,
+        ...(l.video ? { video: l.video } : {}),
+      },
+    });
+    console.log(`… teksti ${lang}: «${l.title}» (${l.shortDescription.length}/${l.fullDescription.length})`);
+  }
+
+  for (const [lang, sets] of Object.entries(conf.images ?? {})) {
+    for (const [kind, files] of Object.entries(sets)) {
+      const list = Array.isArray(files) ? files : [files];
+      // Fshi çka është aty, ndryshe ngarkimet grumbullohen: `phoneScreenshots` mban
+      // deri në 8 dhe një ekzekutim i dytë do t'i dyfishonte pamjet.
+      await call(`${API}/applications/${pkg}/edits/${edit.id}/listings/${lang}/${kind}`,
+                 { method: 'DELETE' });
+      for (const f of list) {
+        await call(
+          `${UPLOAD}/applications/${pkg}/edits/${edit.id}/listings/${lang}/${kind}?uploadType=media`,
+          { method: 'POST', raw: readFileSync(resolve(base, f)), type: 'image/png' },
+        );
+      }
+      console.log(`… figurat ${lang}/${kind}: ${list.length}`);
+    }
+  }
+
+  if (conf.details) {
+    await call(`${API}/applications/${pkg}/edits/${edit.id}/details`, {
+      method: 'PUT', json: conf.details,
+    });
+    console.log(`… detajet: ${conf.details.contactEmail ?? '—'} · ${conf.details.defaultLanguage ?? '—'}`);
+  }
+
+  await call(`${API}/applications/${pkg}/edits/${edit.id}:commit`, { method: 'POST' });
+  console.log(`✓ listimi u ngjit për ${pkg}`);
+
+} else if (cmd === 'gjendja') {
+  // Çka di API-ja për gjendjen e listimit. NUK ekziston asnjë fushë «draft/published»
+  // te Play Developer API — gjendja e aplikacionit rron vetëm te Console-i. Prandaj kjo
+  // tregon atë që MUND të lexohet (kontaktet, gjuhët, listimet, gjurmët) dhe pjesën
+  // tjetër e nxjerr nga mungesa: gjurmë të shqyrtueshme bosh = asgjë s'ka dalë kurrë.
+  const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
+
+  const details = await call(`${API}/applications/${pkg}/edits/${edit.id}/details`);
+  console.log(`kontakti   ${details.contactEmail ?? '—'} · ${details.contactWebsite ?? '—'}`);
+  console.log(`gjuha      ${details.defaultLanguage ?? '—'}`);
+
+  const listings = await call(`${API}/applications/${pkg}/edits/${edit.id}/listings`);
+  for (const l of listings.listings ?? [])
+    console.log(`listimi    ${l.language}: «${l.title}» (${(l.shortDescription ?? '').length}/${(l.fullDescription ?? '').length} shkronja)`);
+  if (!(listings.listings ?? []).length) console.log('listimi    ASNJË — aplikacioni s\'del dot nga «Draft» pa të');
+
+  const tracks = await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks`);
+  for (const t of tracks.tracks ?? []) {
+    const rel = (t.releases ?? []).map(r => `${r.status} ${(r.versionCodes ?? []).join(',') || '—'}`).join(' | ') || 'bosh';
+    console.log(`gjurma     ${t.track.padEnd(11)} ${rel}`);
+  }
+
+  await call(`${API}/applications/${pkg}/edits/${edit.id}`, { method: 'DELETE' });
+
 } else {
   console.error(`urdhër i panjohur: ${cmd}`);
   process.exit(2);

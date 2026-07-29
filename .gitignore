@@ -6,3 +6,6 @@ key.properties
 *.keystore
 upload.jks
 dist/
+store/ikona-gen/
+.dart_tool/
+.packages

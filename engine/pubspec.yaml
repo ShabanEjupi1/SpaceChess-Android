@@ -1,0 +1,14 @@
+name: spacechess_engine
+description: Rregullat e shahut dhe kompjuteri i SpaceChess — Dart i pastër, pa Flutter.
+publish_to: 'none'
+version: 1.0.0
+
+# Pa Flutter me qëllim: kështu `dart test` e ekzekuton të gjithë suitën e perft-it
+# në një kontejner pa emulator, pa ekran dhe pa SDK Android — dhe i njëjti kod
+# mund të nisë nesër edhe në një server Dart, si te Tokërrgjiku.
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^4.0.0

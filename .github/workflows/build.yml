@@ -1,32 +1,77 @@
-name: Ndërto dhe ngarko
+name: Ndërto, testo dhe ngarko
 
 on:
   push:
     branches: [ main ]
     tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
+env:
+  FLUTTER_VERSION: '3.38.10'
+
 jobs:
-  android:
-    name: AAB + APK
+  # ── Testet vijnë të parat dhe gjithçka tjetër varet prej tyre ──────────────
+  #
+  # Motori është Dart i pastër: perft-i ekzekutohet pa Flutter, pa emulator dhe
+  # pa telefon, në pak sekonda. Kjo është arsyeja pse rregullat rrinë jashtë
+  # aplikacionit — një motor shahu mund të jetë i gabuar në mënyra që asnjë
+  # ndërtim i suksesshëm nuk i tregon, dhe vetëm numrat e perft-it i kapin.
+  test:
+    name: Testet
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Motori — analiza dhe perft-i
+        working-directory: engine
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart test
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Aplikacioni — analiza dhe testet
+        working-directory: spacechess_app
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+  # ── Android ───────────────────────────────────────────────────────────────
+  android:
+    name: Android (AAB + APK)
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '17'
+          cache: 'gradle'
 
-      # Pa `gradle-wrapper.jar` në depo me qëllim: një JAR binar i pashikueshëm
-      # që ekzekutohet në çdo ndërtim është pikërisht ajo që kjo shtëpi shmang.
-      # Gradle-ja vjen nga veprimi zyrtar, me version të fiksuar.
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: subosito/flutter-action@v2
         with:
-          gradle-version: '8.11.1'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
 
       - name: Vendos çelësin e nënshkrimit
+        working-directory: spacechess_app/android
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
@@ -34,41 +79,80 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "::warning::Pa ANDROID_KEYSTORE_BASE64 — ndërtim i panënshkruar."
+            echo "::warning::Pa ANDROID_KEYSTORE_BASE64 — ndërtim me çelësin e debug-ut."
             exit 0
           fi
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$GITHUB_WORKSPACE/upload.jks"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/upload.jks
           cat > key.properties <<EOF
-          storeFile=$GITHUB_WORKSPACE/upload.jks
+          storeFile=$(pwd)/app/upload.jks
           storePassword=$ANDROID_STORE_PASSWORD
           keyAlias=$ANDROID_KEY_ALIAS
           keyPassword=$ANDROID_KEY_PASSWORD
           EOF
-          # `secrets` nuk lexohet te `if` i një hapi; kushti duhet të kalojë
-          # përmes $GITHUB_ENV ose kontrolli i mëposhtëm kapërcehet në heshtje.
+          # 🚨 `secrets` NUK lexohet te `if` i një hapi. Kushti duhet të kalojë
+          # përmes $GITHUB_ENV, ndryshe kontrolli më poshtë del gjithmonë false
+          # dhe kapërcehet në heshtje — pra rrjeta që duhet të kapë një AAB të
+          # nënshkruar me debug nuk ekziston fare.
           echo "SIGNED=true" >> "$GITHUB_ENV"
 
-      - name: Ndërto
-        run: gradle --no-daemon :app:bundleRelease :app:assembleRelease
+      - name: Ndërto AAB-në
+        working-directory: spacechess_app
+        run: |
+          flutter pub get
+          flutter build appbundle --release
+
+      - name: Ndërto APK-në
+        working-directory: spacechess_app
+        run: flutter build apk --release
 
       - name: Kontrollo se AAB-ja NUK është nënshkruar me çelësin e debug-ut
         if: env.SIGNED == 'true'
         run: |
-          AAB=app/build/outputs/bundle/release/app-release.aab
+          # Një AAB i nënshkruar me debug ngarkohet, duket i rregullt dhe
+          # refuzohet vetëm nga Play Console — pasi ke pritur ndërtimin.
+          AAB=spacechess_app/build/app/outputs/bundle/release/app-release.aab
           if keytool -printcert -jarfile "$AAB" | grep -q 'CN=Android Debug'; then
             echo "::error::AAB-ja u nënshkrua me çelësin e DEBUG-ut."
             exit 1
           fi
-          keytool -printcert -jarfile "$AAB" | grep -E 'Owner|SHA256'
+          keytool -printcert -jarfile "$AAB" | head -20
 
       - uses: actions/upload-artifact@v4
         with:
           name: android
           path: |
-            app/build/outputs/bundle/release/app-release.aab
-            app/build/outputs/apk/release/app-release.apk
+            spacechess_app/build/app/outputs/bundle/release/app-release.aab
+            spacechess_app/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
 
+  # ── Web ───────────────────────────────────────────────────────────────────
+  #
+  # I njëjti kod si aplikacioni. Faqja e sotme (chess.spacecode.tech) mbetet ajo
+  # e JS-së; ky ndërtim ekziston që të mos kalojë pa u vënë re një ndryshim që e
+  # prish web-in, dhe që pamjet e ekranit për Play të merren pa telefon.
+  web:
+    name: Web
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - working-directory: spacechess_app
+        run: |
+          flutter pub get
+          flutter build web --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: spacechess_app/build/web
+          if-no-files-found: error
+
+  # ── Play ──────────────────────────────────────────────────────────────────
   play:
     name: Play (gjurma e brendshme)
     if: startsWith(github.ref, 'refs/tags/v')

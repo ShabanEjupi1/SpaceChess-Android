@@ -1,67 +1,79 @@
-# SpaceChess për Android
+# SpaceChess — aplikacioni
 
-Mbështjellësi Android i **https://chess.spacecode.tech**, i ndërtuar si
-*Trusted Web Activity*: aplikacioni hap Chrome-in e vetë telefonit, pa shirit
-adrese, mbi të njëjtin kod që luan faqja.
+Shah kundër kompjuterit dhe online, në Android, iOS, web dhe desktop. **Aplikacion
+vendas Flutter**, jo një faqe e mbështjellë.
 
-Loja nuk ndodhet këtu. Kodi i saj është te `linux-install/spacechess/`
-(Gitea). Kjo depo mban vetëm paketimin për Google Play, sepse ndërtimet
-Android nuk bëhen dot në Ampere: Google nuk shpërndan `aapt2`/`d8` për
-linux-aarch64. Prandaj CI-ja është këtu, mbi vrapuesit x86 falas të GitHub-it.
+```
+engine/           motori — Dart i pastër, pa Flutter (rregullat, variantet, AI-ja)
+spacechess_app/   aplikacioni Flutter (android · ios · web · linux · windows · macos)
+store/            teksti, ikonat dhe pamjet për Google Play
+tools/play.mjs    Play Developer API, pa varësi
+```
 
-## Pse TWA e jo WebView
+## Pse depo më vete nga loja
 
-Një WebView është një shfletues i ngrirë brenda aplikacionit: pa përditësime
-sigurie nga Chrome, pa të njëjtin motor JavaScript, dhe me një depozitë të
-ndarë — pra lojtari do të humbte kredencialin `sc_token`, dhe bashkë me të
-edhe pikët e veta. Një TWA është Chrome-i i vërtetë: i njëjti motor, e njëjta
-depozitë, i njëjti lojtar në telefon dhe në shfletues.
+Loja në web (`chess.spacecode.tech`) rri te `linux-install/spacechess` në Gitea.
+Ky aplikacion rri **këtu, në GitHub**, sepse Android-i **nuk ndërtohet dot në
+Ampere**: Google nuk boton `aapt2`/`d8` për linux-aarch64. CI-ja e GitHub-it ka
+runner-a x86 falas, dhe `linux-install` nuk ka remote GitHub.
 
-## Lidhja me faqen
+## 🚨 Ç'ndryshoi më 29-07-2026
 
-Dy gjysma që duhet të përputhen:
+Ky ishte një **mbështjellës TWA** — një skedë Chrome-i me ikonë. U hoq i tëri.
+Shkaku nuk ishte shija: një aplikacion që është një faqe e hapur me shirit
+adrese nuk i jep lojtarit asgjë që faqja s'ia jep tashmë. Tani:
 
-1. `app/src/main/res/values/strings.xml` → `asset_statements` (drejt faqes)
-2. `https://chess.spacecode.tech/.well-known/assetlinks.json` (drejt paketës)
-
-Skedari i dytë ndodhet te `linux-install/spacechess/static/.well-known/`.
-
-🚨 **Pas ngarkimit të parë te Play, gjurma ndryshon.** Play App Signing e
-rinënshkruan aplikacionin me çelësin e vet, ndaj `assetlinks.json` duhet të
-përmbajë edhe gjurmën SHA-256 të *çelësit të nënshkrimit të Play-it*
-(Play Console → Test and release → Setup → App integrity). Pa të, aplikacioni
-hapet me shirit adrese sipër — punon, por duket si një skedë shfletuesi.
+- **Rregullat u rishkruan në Dart** dhe janë të lidhura me suitën standarde të
+  perft-it (pozicioni fillestar, Kiwipete, pozicionet 3–6, Chess960). Motori i
+  JS-së i faqes mbetet aty ku ishte; **numrat e perft-it janë kontrata mes të
+  dyve** — nëse njëri ndryshon dhe tjetri jo, ata numra e tregojnë.
+- **Kompjuteri mendon në pajisje**, në një isolate. Ampere-ja nuk merr asnjë
+  kërkim shahu.
+- **Figurat vizatohen me vektorë**, jo me glife Unicode: ♞ nuk gjendet te
+  Roboto-ja dhe në disa telefonë Android tabela do të dilte katrorë bosh.
+- **Tokeni `sc_token` ruhet nga vetë aplikacioni** dhe dërgohet si kokë
+  `Cookie:`. Ai token ËSHTË llogaria — pikët dhe historia. (Pikërisht kjo ishte
+  arsyeja e TWA-së kundrejt një WebView-i; tani nuk ka më rëndësi.)
 
 ## Ndërtimi
 
-CI-ja e bën vetë (`.github/workflows/build.yml`). Me dorë:
-
-```
-gradle :app:bundleRelease        # → app/build/outputs/bundle/release/app-release.aab
-```
-
-Nënshkrimi kërkon `key.properties` në rrënjë (i injoruar nga git):
-
-```
-storeFile=/shtegu/te/spacechess-upload.jks
-storePassword=…
-keyAlias=spacechess
-keyPassword=…
+```sh
+cd engine         && dart pub get   && dart test        # perft — rrjeta e sigurisë
+cd spacechess_app && flutter pub get && flutter test
+flutter build appbundle --release                        # kërkon key.properties
 ```
 
-Çelësi ndodhet te depoja private `spacecode-brain/keys/spacechess-upload.jks`,
-dhe fjalëkalimet te `credentials.local.txt`. Nëse humbet, aplikacioni nuk
-përditësohet dot më kurrë — duhet listim i ri, me paketë tjetër.
+Në Ampere ndërtohen **vetëm** `flutter analyze/test/build web`
+(`export PATH=$PATH:/mnt/data/flutter/bin`). AAB-ja dhe APK-ja dalin nga CI-ja.
 
-## Ngarkimi te Play
+## Nënshkrimi dhe Play
 
-Një etiketë `v*` e ngarkon AAB-në te gjurma e brendshme:
+- Çelësi: `spacecode-brain/keys/spacechess-upload.jks`, alias `spacechess`.
+  **Kopje e vetme.** Humbja e tij = aplikacioni nuk përditësohet dot më kurrë.
+- Sekretet te GitHub: `ANDROID_KEYSTORE_BASE64`, `ANDROID_STORE_PASSWORD`,
+  `ANDROID_KEY_PASSWORD`, `ANDROID_KEY_ALIAS`, `PLAY_SERVICE_ACCOUNT_JSON`.
+- Një etiketë `v*` e ngarkon vetë AAB-në te gjurma e brendshme.
 
+Listimi (tekst + ikonë + grafikë + pamje) ngjitet me:
+
+```sh
+node tools/play.mjs <çelësi.json> listimi tech.spacecode.chess store/listimi.json
+node tools/play.mjs <çelësi.json> gjendja tech.spacecode.chess
 ```
-git tag v1.0.0 && git push origin v1.0.0
+
+⛔ Klasifikimi i përmbajtjes, «Siguria e të dhënave», publiku i synuar dhe
+shtetet **nuk bëhen dot me API** — ato mbeten me dorë te Play Console.
+
+## Ikonat dhe pamjet
+
+Burimi i ikonës rri te `linux-install/spacechess/store/ikona.html` (i njëjti SVG
+si stema e faqes). Rivizatimi kërkon një Chrome pa ekran:
+
+```sh
+node linux-install/spacechess/store/vizato.mjs http://127.0.0.1:9222 \
+     store/ikona-gen linux-install/spacechess/store/grafikat.json
+sh store/vendos-ikonat.sh store/ikona-gen
 ```
 
-Kjo kërkon sekretin `PLAY_SERVICE_ACCOUNT_JSON` dhe — më e rëndësishmja — që
-aplikacioni `tech.spacecode.chess` **të ekzistojë tashmë te Play Console**:
-API-ja nuk krijon dot aplikacione të reja dhe ngarkimin e parë e pranon vetëm
-pas krijimit me dorë.
+Pamjet e ekranit merren nga ndërtimi i vërtetë i web-it me
+`linux-install/spacechess/store/pamje.mjs` dhe hapat te `store/hapat.json`.

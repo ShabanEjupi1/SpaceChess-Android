@@ -1,0 +1,6 @@
+[
+  { "wait": 2500, "shot": "pamje-1-ballina" },
+  { "tap": [180, 222], "wait": 2500, "shot": "pamje-2-tabela" },
+  { "tap": [201, 449], "wait": 900,  "shot": "pamje-3-levizjet" },
+  { "tap": [201, 363], "wait": 1200, "shot": "pamje-4-luajtur" }
+]

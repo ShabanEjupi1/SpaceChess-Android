@@ -1,0 +1,42 @@
+{
+  "_": "Listimi i plotë për Google Play, i ngjitur me `node tools/play.mjs <çelësi.json> listimi tech.spacecode.chess store/listimi.json`. Teksti burimor rri te linux-install/spacechess/store/LISTIMI.md — ndrysho të DYJA bashkë.",
+  "listings": {
+    "sq": {
+      "title": "SpaceChess — shah online",
+      "shortDescription": "Shah kundër kompjuterit ose kundër njerëzve. Pa regjistrim, pa reklama.",
+      "fullDescription": "SpaceChess është shah që hapet dhe luhet — pa llogari, pa email, pa reklama.\n\nLUAJ SI TË DUASH\n• Kundër kompjuterit, tetë nivele: nga fillestari te maksimali.\n• Kundër një kundërshtari të rastësishëm, me pikë renditjeje.\n• Me një shok, përmes një lidhjeje private.\n• Në të njëjtën pajisje, dy lojtarë, me tabelë që kthehet vetë.\n\nPESË VARIANTE\nStandard, Chess960, Mbreti i Kodrës, Tre Shahe dhe Antishah.\n\nPIKË PA REGJISTRIM\nRenditja jote ruhet pa llogari. Nuk kërkohet as emër, as email, as numër telefoni.\n\nKOMPJUTERI LUAN NË TELEFONIN TËND\nKërkimi i lëvizjes bëhet brenda pajisjes, jo në një server. Prandaj loja kundër kompjuterit vazhdon edhe kur je pa internet, dhe asnjë lëvizje e jotja nuk ka nevojë të udhëtojë askund.\n\nTJERA\nKthim lëvizjeje, kalim në figurë me zgjedhje, ndriçim i lëvizjeve të ligjshme dhe i shahut, dhe lojë e ruajtur automatikisht kundër kompjuterit.\n\nAsnjë leje nuk kërkohet përveç internetit, dhe vetëm kur luan online."
+    },
+    "en-US": {
+      "title": "SpaceChess — chess online",
+      "shortDescription": "Chess against the computer or against people. No sign-up, no ads.",
+      "fullDescription": "SpaceChess is chess you open and play — no account, no email, no ads.\n\nPLAY HOWEVER YOU LIKE\n• Against the computer, eight levels: from beginner to maximum.\n• Against a random opponent, with a rating.\n• With a friend, over a private link.\n• Two players on the same device, with a board that flips itself.\n\nFIVE VARIANTS\nStandard, Chess960, King of the Hill, Three-check and Antichess.\n\nA RATING WITHOUT SIGNING UP\nYour rating is kept without an account. No name, no email, no phone number is required.\n\nTHE COMPUTER THINKS ON YOUR PHONE\nThe move search runs on the device, not on a server. So playing the computer keeps working with no internet, and none of your moves need to travel anywhere.\n\nALSO\nTake back a move, choose your promotion piece, legal-move and check highlighting, and a game against the computer that saves itself.\n\nNo permission is requested other than the internet, and only when playing online."
+    }
+  },
+  "images": {
+    "sq": {
+      "icon": "assets/play-ikona-512.png",
+      "featureGraphic": "assets/play-grafika-1024x500.png",
+      "phoneScreenshots": [
+        "assets/pamje-1-ballina.png",
+        "assets/pamje-2-tabela.png",
+        "assets/pamje-3-levizjet.png",
+        "assets/pamje-4-luajtur.png"
+      ]
+    },
+    "en-US": {
+      "icon": "assets/play-ikona-512.png",
+      "featureGraphic": "assets/play-grafika-1024x500.png",
+      "phoneScreenshots": [
+        "assets/pamje-1-ballina.png",
+        "assets/pamje-2-tabela.png",
+        "assets/pamje-3-levizjet.png",
+        "assets/pamje-4-luajtur.png"
+      ]
+    }
+  },
+  "details": {
+    "defaultLanguage": "sq",
+    "contactEmail": "shaban@shabanejupi.tech",
+    "contactWebsite": "https://chess.spacecode.tech"
+  }
+}
