@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SpaceChess</string>
+
+    <!-- Gjysma e dytë e lidhjes me faqen; gjysma e parë është skedari
+         /.well-known/assetlinks.json te vetë chess.spacecode.tech. Të dyja
+         duhet të përputhen, përndryshe aplikacioni hapet me shirit adrese. -->
+    <string name="asset_statements" translatable="false">
+        [{
+          \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+          \"target\": {
+            \"namespace\": \"web\",
+            \"site\": \"https://chess.spacecode.tech\"
+          }
+        }]
+    </string>
+</resources>

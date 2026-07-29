@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Përmes këtij FileProvider-i aplikacioni ia dorëzon Chrome-it figurën e
+     ekranit të nisjes, që ai ta mbajë të shfaqur derisa faqja të vizatohet. -->
+<paths>
+    <files-path name="twa" path="twa/"/>
+</paths>
