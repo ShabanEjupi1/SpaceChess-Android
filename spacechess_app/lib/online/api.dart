@@ -85,6 +85,29 @@ class SpaceChessApi {
   Future<Map<String, dynamic>?> draw(String id, String action) =>
       _post('/api/games/$id/draw', <String, dynamic>{'action': action});
 
+  /// Fshin llogarinë te serveri. E kërkon politika e Google Play-t: një llogari
+  /// e krijuar brenda aplikacionit duhet të fshihet brenda aplikacionit.
+  ///
+  /// 🚨 Kthen `true` edhe kur serveri përgjigjet 401, dhe kjo është me qëllim:
+  /// 401 do të thotë që tokeni nuk i takon më asnjë llogarie, pra fshirja
+  /// tashmë ka ndodhur. Të thuhej «dështoi» do të ishte gënjeshtër që e lë
+  /// lojtarin të mendojë se të dhënat i kanë mbetur.
+  Future<bool> deleteAccount() async {
+    try {
+      final http.Response r = await _client.delete(
+        Uri.parse('$base/api/me'),
+        headers: _headers,
+      );
+      if (r.statusCode == 200 || r.statusCode == 401 || r.statusCode == 404) {
+        await prefs.clearToken();
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<Map<String, dynamic>?> _get(String path) async =>
       _decode(await _client.get(Uri.parse('$base$path'), headers: _headers));
 

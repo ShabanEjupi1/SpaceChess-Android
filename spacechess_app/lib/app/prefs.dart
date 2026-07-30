@@ -28,6 +28,14 @@ class Prefs {
   String? get token => _p.getString(_kToken);
   Future<void> setToken(String v) => _p.setString(_kToken, v);
 
+  /// Pas fshirjes së llogarisë. Heq edhe emrin: po të mbetej, kërkesa e parë e
+  /// radhës do ta rikrijonte menjëherë të njëjtin lojtar dhe fshirja do të
+  /// dukej sikur nuk ndodhi.
+  Future<void> clearToken() async {
+    await _p.remove(_kToken);
+    await _p.remove(_kName);
+  }
+
   String get name => _p.getString(_kName) ?? '';
   Future<void> setName(String v) => _p.setString(_kName, v.trim());
 

@@ -91,6 +91,91 @@ class _LobbyPageState extends State<LobbyPage> {
     await _open(game['id'] as String);
   }
 
+  /// Cilësimet e llogarisë. Përmban fshirjen, që Google Play e kërkon të jetë
+  /// e arritshme **brenda** aplikacionit për çdo llogari të krijuar brenda tij.
+  Future<void> _accountSettings() async {
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (BuildContext sheet) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Llogaria'),
+              subtitle: Text(widget.prefs.name.isEmpty
+                  ? 'Mysafir — pa emër, pa email, pa fjalëkalim'
+                  : '${widget.prefs.name} — pa email, pa fjalëkalim'),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.delete_forever, color: Color(0xFFE05252)),
+              title: const Text('Fshi llogarinë',
+                  style: TextStyle(color: Color(0xFFE05252))),
+              subtitle: const Text(
+                  'Emri dhe vlerësimi fshihen menjëherë e nuk kthehen mbrapsht.'),
+              onTap: () {
+                Navigator.of(sheet).pop();
+                unawaited(_confirmDelete());
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete() async {
+    if (!mounted) return;
+    final bool ok = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext d) => AlertDialog(
+            title: const Text('Të fshihet llogaria?'),
+            content: const Text(
+                'Emri, vlerësimi dhe historiku yt fshihen nga serveri dhe nuk '
+                'kthehen mbrapsht.\n\n'
+                'Lojërat e luajtura mbeten te kundërshtarët, por pa emrin tënd.\n\n'
+                'Loja kundër kompjuterit dhe ajo në një pajisje vazhdojnë të '
+                'punojnë — ato nuk kërkojnë llogari.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(d).pop(false),
+                child: const Text('Jo'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(d).pop(true),
+                style: TextButton.styleFrom(foregroundColor: const Color(0xFFE05252)),
+                child: const Text('Fshi'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (!ok || !mounted) return;
+
+    setState(() => _busy = true);
+    final bool done = await _api.deleteAccount();
+    if (!mounted) return;
+
+    if (!done) {
+      setState(() {
+        _busy = false;
+        _error = 'Fshirja dështoi. Kontrollo internetin dhe provo sërish.';
+      });
+      return;
+    }
+    // Llogaria s'ekziston më, ndaj salla nuk ka çfarë të tregojë. Dalja te
+    // menyja është e vetmja gjendje e ndershme.
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Llogaria u fshi.')),
+    );
+  }
+
   Future<void> _open(String id) async {
     await Navigator.of(context).push(MaterialPageRoute<void>(
       builder: (_) =>
@@ -102,7 +187,16 @@ class _LobbyPageState extends State<LobbyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Luaj online')),
+      appBar: AppBar(
+        title: const Text('Luaj online'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Cilësimet e llogarisë',
+            onPressed: _busy ? null : () => unawaited(_accountSettings()),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _load,
