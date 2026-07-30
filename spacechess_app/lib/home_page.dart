@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spacechess_engine/spacechess_engine.dart';
 
+import 'app/ads.dart';
 import 'app/prefs.dart';
 import 'app/theme.dart';
 import 'game/game_page.dart';
@@ -34,64 +35,76 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 32, 20, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const _Title(),
-              const SizedBox(height: 32),
+        // 🔑 Banderola rri JASHTË rrëshqitësit, e ngjitur poshtë. Brenda tij ajo
+        // do të ndodhej nën variantet, pra e padukshme derisa lojtari të
+        // rrëshqiste — një reklamë që nuk shihet paguhet zero — dhe, më keq, do
+        // të lëvizte bashkë me gishtin mbi butonat. Kur nuk është gati zë ZERO
+        // hapësirë, ndaj menyja nuk ka vend bosh kur reklama nuk vjen.
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 32, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const _Title(),
+                    const SizedBox(height: 32),
 
-              if (saved != null) ...<Widget>[
-                FilledButton.icon(
-                  onPressed: () => _play(
-                    level: widget.prefs.level,
-                    colour: saved.colour,
-                    variant: _variantOf(saved.variant),
-                    fen: saved.fen.isEmpty ? null : saved.fen,
-                    resume: saved.moves,
-                  ),
-                  icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Vazhdo lojën'),
+                    if (saved != null) ...<Widget>[
+                      FilledButton.icon(
+                        onPressed: () => _play(
+                          level: widget.prefs.level,
+                          colour: saved.colour,
+                          variant: _variantOf(saved.variant),
+                          fen: saved.fen.isEmpty ? null : saved.fen,
+                          resume: saved.moves,
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('Vazhdo lojën'),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+
+                    FilledButton.icon(
+                      onPressed: () => unawaited(_chooseLevel()),
+                      icon: const Icon(Icons.smart_toy_outlined),
+                      label: const Text('Kundër kompjuterit'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => _play(
+                        level: 0,
+                        colour: white,
+                        variant: _variantOf(widget.prefs.variant),
+                      ),
+                      icon: const Icon(Icons.people_outline),
+                      label: const Text('Dy lojtarë, një pajisje'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => unawaited(Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => LobbyPage(prefs: widget.prefs),
+                        ),
+                      )),
+                      icon: const Icon(Icons.public),
+                      label: const Text('Luaj online'),
+                    ),
+
+                    const SizedBox(height: 32),
+                    _VariantPicker(
+                      value: widget.prefs.variant,
+                      names: _variantNames,
+                      onPick: (String v) =>
+                          setState(() => unawaited(widget.prefs.setVariant(v))),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-              ],
-
-              FilledButton.icon(
-                onPressed: () => unawaited(_chooseLevel()),
-                icon: const Icon(Icons.smart_toy_outlined),
-                label: const Text('Kundër kompjuterit'),
               ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => _play(
-                  level: 0,
-                  colour: white,
-                  variant: _variantOf(widget.prefs.variant),
-                ),
-                icon: const Icon(Icons.people_outline),
-                label: const Text('Dy lojtarë, një pajisje'),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton.icon(
-                onPressed: () => unawaited(Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => LobbyPage(prefs: widget.prefs),
-                  ),
-                )),
-                icon: const Icon(Icons.public),
-                label: const Text('Luaj online'),
-              ),
-
-              const SizedBox(height: 32),
-              _VariantPicker(
-                value: widget.prefs.variant,
-                names: _variantNames,
-                onPick: (String v) =>
-                    setState(() => unawaited(widget.prefs.setVariant(v))),
-              ),
-            ],
-          ),
+            ),
+            const BannerSlot(),
+          ],
         ),
       ),
     );
@@ -202,12 +215,16 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Column(
         children: <Widget>[
-          Text('SpaceChess',
+          Text('Mat!',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 34, fontWeight: FontWeight.w800, letterSpacing: -0.5)),
+                  fontSize: 44, fontWeight: FontWeight.w800, letterSpacing: -1)),
           SizedBox(height: 6),
-          Text('Shah pa llogari, pa reklama',
+          // ⚠️ Ky rresht thoshte «pa llogari, pa reklama». Reklamat u shtuan më
+          // 2026-07-30, ndaj gjysma e dytë u hoq edhe këtu edhe te listimi i
+          // Play-it. Një premtim i mbetur në ekran është gënjeshtër e shkruar,
+          // dhe te Play-i është shkak ankese.
+          Text('Shah pa llogari, edhe pa internet',
               textAlign: TextAlign.center,
               style: TextStyle(color: Palette.textDim, fontSize: 15)),
         ],

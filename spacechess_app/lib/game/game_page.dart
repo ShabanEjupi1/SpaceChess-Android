@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spacechess_engine/spacechess_engine.dart';
 
+import '../app/ads.dart';
 import '../app/prefs.dart';
 import '../app/theme.dart';
 import '../board/board_view.dart';
@@ -49,6 +50,13 @@ class _GamePageState extends State<GamePage> {
   Move? _lastMove;
   bool _thinking = false;
   bool _dialogShown = false;
+
+  /// Sa kthime lëvizjeje janë shfrytëzuar në këtë lojë. Tri të parat janë të
+  /// lira; pas tyre lojtari mund të zgjedhë një reklamë me shpërblim për tri të
+  /// tjera. Ky kufi NUK zbatohet kur reklamat nuk ekzistojnë fare (web, desktop,
+  /// pëlqim i refuzuar) — atje kthimi mbetet i pakufizuar, si më parë.
+  int _undosUsed = 0;
+  static const int _freeUndos = 3;
 
   @override
   void initState() {
@@ -201,11 +209,17 @@ class _GamePageState extends State<GamePage> {
       builder: (BuildContext context) => AlertDialog(
         title: Text(_title(st), style: const TextStyle(fontWeight: FontWeight.w700)),
         content: Text(_explain(st)),
+        // 🔑 Reklama e ndërmjetme shfaqet vetëm PASI lojtari e mbyll këtë
+        // dialog, jo mbi të: një reklamë që zë vendin e rezultatit e fsheh
+        // pikërisht atë që lojtari po pret. [Ads.maybeShowAfterGame] vendos
+        // vetë a ka mbushur kufiri (1 në 3 lojëra, jo dy brenda 3 minutash) —
+        // ky ekran nuk mban asnjë numërues reklamash.
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).pop();
+              unawaited(Ads.maybeShowAfterGame());
             },
             child: const Text('Dil'),
           ),
@@ -218,7 +232,9 @@ class _GamePageState extends State<GamePage> {
                 _selected = null;
                 _targets = const <Move>[];
                 _dialogShown = false;
+                _undosUsed = 0;
               });
+              unawaited(Ads.maybeShowAfterGame());
               unawaited(_maybeThink());
             },
             child: const Text('Përsëri'),
@@ -248,6 +264,55 @@ class _GamePageState extends State<GamePage> {
         EndReason.antichess => 'Pa figura, pa lëvizje — dhe kjo fiton këtu.',
         _ => '',
       };
+
+  /// Kthimi i një lëvizjeje.
+  ///
+  /// Tri të parat janë të lira. Pas tyre kërkohet një reklamë me shpërblim, dhe
+  /// vetëm me pyetje: lojtari mund të thotë «jo» dhe loja vazhdon normalisht.
+  ///
+  /// 🔑 Nëse reklama nuk vjen ose dështon, kthimet **jepen gjithsesi**. Një
+  /// lojtar që pranoi të shohë një reklamë nuk duhet ndëshkuar për një rrjet që
+  /// nuk u përgjigj — dhe pa internet (ku loja kundër kompjuterit punon fare
+  /// mirë) përndryshe kthimi do të bllokohej përgjithmonë pas lëvizjes së tretë.
+  Future<void> _undo() async {
+    if (_game.moves.isEmpty || _thinking) return;
+
+    if (Ads.ready && _undosUsed >= _freeUndos) {
+      final bool? watch = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Kthime të tjera?'),
+          content: const Text(
+              'Tri kthimet e lira të kësaj loje mbaruan. Një reklamë e shkurtër '
+              'të jep tri të tjera.'),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Jo, faleminderit')),
+            FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Shiko reklamën')),
+          ],
+        ),
+      );
+      if (watch != true || !mounted) return;
+      await Ads.showRewarded();
+      if (!mounted) return;
+      _undosUsed = 0;
+    }
+
+    _undosUsed++;
+    setState(() {
+      // Kundër kompjuterit kthen ÇIFTIN: të kthesh vetëm lëvizjen e kompjuterit
+      // do të thoshte t'ia jepje radhën atij dy herë radhazi.
+      _game.undo();
+      if (widget.vsComputer && _game.moves.isNotEmpty) _game.undo();
+      _lastMove = _game.moves.isEmpty ? null : _game.moves.last;
+      _selected = null;
+      _targets = const <Move>[];
+      _dialogShown = false;
+    });
+  }
 
   Future<void> _confirmLeave() async {
     if (_game.isOver || _game.moves.isEmpty) {
@@ -296,20 +361,7 @@ class _GamePageState extends State<GamePage> {
               icon: const Icon(Icons.undo),
               onPressed: _game.moves.isEmpty || _thinking
                   ? null
-                  : () => setState(() {
-                        // Kundër kompjuterit kthen ÇIFTIN: të kthesh vetëm
-                        // lëvizjen e kompjuterit do të thoshte t'ia jepje radhën
-                        // atij dy herë radhazi.
-                        _game.undo();
-                        if (widget.vsComputer && _game.moves.isNotEmpty) {
-                          _game.undo();
-                        }
-                        _lastMove =
-                            _game.moves.isEmpty ? null : _game.moves.last;
-                        _selected = null;
-                        _targets = const <Move>[];
-                        _dialogShown = false;
-                      }),
+                  : () => unawaited(_undo()),
             ),
           ],
         ),
