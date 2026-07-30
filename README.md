@@ -1,7 +1,14 @@
-# SpaceChess — aplikacioni
+# Mat! — aplikacioni i shahut
 
 Shah kundër kompjuterit dhe online, në Android, iOS, web dhe desktop. **Aplikacion
 vendas Flutter**, jo një faqe e mbështjellë.
+
+> **Emri.** Produkti quhet **Mat!** nga 30-07-2026 (më parë «SpaceChess»).
+> «SpaceChess» mbetet emri i *projektit* — depoja, paketa
+> `tech.spacecode.chess`, kontejneri dhe `chess.spacecode.tech` — sepse asnjëri
+> prej tyre nuk shihet nga lojtari dhe paketa te Play-i nuk ndryshohet dot.
+> Emri i vjetër duhet të mos ndodhet **vetëm** te: etiketa e aplikacionit,
+> titulli i listimit, ballina, dhe politika e privatësisë.
 
 ```
 engine/           motori — Dart i pastër, pa Flutter (rregullat, variantet, AI-ja)
@@ -34,6 +41,25 @@ adrese nuk i jep lojtarit asgjë që faqja s'ia jep tashmë. Tani:
 - **Tokeni `sc_token` ruhet nga vetë aplikacioni** dhe dërgohet si kokë
   `Cookie:`. Ai token ËSHTË llogaria — pikët dhe historia. (Pikërisht kjo ishte
   arsyeja e TWA-së kundrejt një WebView-i; tani nuk ka më rëndësi.)
+
+## 📣 Reklamat (nga 30-07-2026)
+
+E gjithë politika rri te **`spacechess_app/lib/app/ads.dart`**, në një skedar të
+vetëm: banderolë te menyja, një e ndërmjetme 1 në 3 lojëra (dhe jo dy brenda 3
+minutash), dhe një me shpërblim — vetëm me pyetje — për kthime shtesë të
+lëvizjeve pas tri të lirave. **Mbi tabelën, gjatë lojës, asgjë.**
+
+- 🚨 Në debug përdoren **gjithmonë** njësitë e provës së Google-it. Një klikim i
+  vetëm mbi njësinë e vërtetë nga vetë zhvilluesi është «trafik i pavlefshëm» dhe
+  llogaria e AdMob-it mbyllet pa paralajmërim.
+- 🚨 Identifikuesi i aplikacionit te manifesti është i **shahut**
+  (`~3928973421`), jo i Tokërrgjikut (`~3673667026`). Pa të, aplikacioni rrëzohet
+  në nisje.
+- 🕌 Filtrimi halal duhet në dy vende: `MaxAdContentRating.g` te kodi (bërë) dhe
+  Sensitive categories te konsola e AdMob-it (me dorë).
+- ⚠️ Premtimi «pa reklama» u hoq nga **katër** vende bashkë: përshkrimi te
+  `store/listimi.json`, nëntitulli te `home_page.dart`, `LISTIMI.md`, dhe
+  politika e privatësisë. Nëse mbetet në një, është ankesë.
 
 ## Ndërtimi
 

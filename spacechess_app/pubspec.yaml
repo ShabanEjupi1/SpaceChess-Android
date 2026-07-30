@@ -1,12 +1,12 @@
 name: spacechess
-description: "SpaceChess — shah kundër kompjuterit dhe online, në çdo pajisje."
+description: "Mat! — shah kundër kompjuterit dhe online, në çdo pajisje."
 publish_to: 'none'
 
 # 1.0.0+1 ishte mbështjellësi TWA (një skedë Chrome-i me ikonë). Ky është
 # aplikacioni i vërtetë, ndaj versioni i dukshëm nis nga 2.0.0 — por numri i
 # ndërtimit vazhdon nga aty ku e la, sepse Play-i nuk e pranon kurrë dy herë të
 # njëjtin versionCode.
-version: 2.0.0+2
+version: 2.1.0+3
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -25,6 +25,10 @@ dependencies:
   # mos shfaqen fare nuk është aplikacion shahu.
   http: ^1.2.0
   shared_preferences: ^2.2.3
+
+  # Reklamat. E gjithë politika — ku shfaqen, sa shpesh, dhe filtrimi halal —
+  # rri te `lib/app/ads.dart`, jo e shpërndarë nëpër ekrane.
+  google_mobile_ads: ^6.0.0
 
 dev_dependencies:
   flutter_test:

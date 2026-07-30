@@ -6,9 +6,17 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="SpaceChess"
+        android:label="Mat!"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- 🚨 Pa këtë identifikues aplikacioni RRËZOHET në nisje me një
+             përjashtim të qartë nga SDK-ja e reklamave — jo në heshtje, ndaj
+             s'ka si të kalojë pa u vënë re.
+             ⚠️ Ky është i shahut (`~3928973421`), NUK është i Tokërrgjikut
+             (`~3673667026`): e njëjta llogari AdMob, dy aplikacione. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1776059573171352~3928973421"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
