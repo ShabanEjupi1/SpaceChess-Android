@@ -80,4 +80,52 @@ class Prefs {
     await _p.remove(_kSavedFen);
     await _p.remove(_kSavedColor);
   }
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Enigmat dhe statistikat — vetëm në pajisje
+  //
+  // 🔑 Asgjë nga këto nuk shkon te serveri dhe asgjë nuk kërkon llogari. Kjo
+  // NUK e ndryshon deklaratën «Data safety» te Play: ruajtja vendëse nuk është
+  // mbledhje të dhënash. Nëse ndonjëherë këto numra dërgohen diku, deklarata
+  // duhet rihapur — shih PLAY-TE-DYJA.md.
+  // ───────────────────────────────────────────────────────────────────────────
+
+  static const String _kPuzzle = 'enigma_e_fundit';
+  static const String _kPuzzleDone = 'enigma_te_zgjidhura';
+  static const String _kWins = 'fitore';
+  static const String _kLosses = 'humbje';
+  static const String _kDraws = 'barazime';
+
+  /// Indeksi i enigmës ku ka mbetur lojtari. Ruhet indeksi e jo id-ja sepse
+  /// lista gjenerohet me farë të ngulur dhe nuk rirenditet.
+  int get puzzleIndex => _p.getInt(_kPuzzle) ?? 0;
+  Future<void> setPuzzleIndex(int v) => _p.setInt(_kPuzzle, v);
+
+  int get puzzlesSolved => _p.getInt(_kPuzzleDone) ?? 0;
+  Future<void> addPuzzleSolved() =>
+      _p.setInt(_kPuzzleDone, puzzlesSolved + 1);
+
+  int get wins => _p.getInt(_kWins) ?? 0;
+  int get losses => _p.getInt(_kLosses) ?? 0;
+  int get draws => _p.getInt(_kDraws) ?? 0;
+  int get gamesPlayed => wins + losses + draws;
+
+  Future<void> recordResult({required int outcome}) async {
+    switch (outcome) {
+      case 1:
+        await _p.setInt(_kWins, wins + 1);
+      case -1:
+        await _p.setInt(_kLosses, losses + 1);
+      default:
+        await _p.setInt(_kDraws, draws + 1);
+    }
+  }
+
+  Future<void> clearStats() async {
+    await _p.remove(_kWins);
+    await _p.remove(_kLosses);
+    await _p.remove(_kDraws);
+    await _p.remove(_kPuzzle);
+    await _p.remove(_kPuzzleDone);
+  }
 }

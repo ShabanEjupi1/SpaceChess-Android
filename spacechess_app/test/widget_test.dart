@@ -24,7 +24,7 @@ void main() {
     await t.pumpAndSettle();
 
     expect(find.text('Mat!'), findsOneWidget);
-    expect(find.text('Kundër kompjuterit'), findsOneWidget);
+    expect(find.text('Luaj vetëm'), findsOneWidget);
     expect(find.text('Dy lojtarë, një pajisje'), findsOneWidget);
     expect(find.text('Luaj online'), findsOneWidget);
   });

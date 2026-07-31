@@ -184,6 +184,18 @@ class _GamePageState extends State<GamePage> {
   void _afterMove() {
     if (_game.isOver) {
       unawaited(widget.prefs.clearSavedGame());
+      // Numëruesi vendës i faqes «Statistika». Vetëm lojërat vetëm — te dy
+      // lojtarë mbi një ekran nuk ka «ti», ndaj një fitore s'i takon askujt.
+      if (widget.vsComputer) {
+        final String? r = _game.status.result;
+        unawaited(widget.prefs.recordResult(
+          outcome: r == '1/2-1/2'
+              ? 0
+              : (r == '1-0' ? white : black) == widget.humanColour
+                  ? 1
+                  : -1,
+        ));
+      }
       _showResult();
       return;
     }
@@ -489,12 +501,16 @@ class _GamePageState extends State<GamePage> {
     if (!widget.vsComputer) return colour == white ? 'I bardhi' : 'I ziu';
     return colour == widget.humanColour
         ? (widget.prefs.name.isEmpty ? 'Ti' : widget.prefs.name)
-        : 'Kompjuteri';
+        // 🕌 Kundërshtari nuk quhet «Kompjuteri»: emri i jep pajisjes rolin e
+        // një vetjeje që luan. Ajo vetëm zbaton rregullat, ndaj rreshti mban
+        // atë që lojtari ka zgjedhur vërtet — shkallën e vështirësisë.
+        : AiLevel.byId(widget.level).name;
   }
 
   String _hint(GameStatus st) {
     if (st.over) return _title(st);
-    if (_thinking) return 'Kompjuteri po mendon…';
+    // «Po mendon» është veprim njeriu; ajo që ndodh është llogaritje.
+    if (_thinking) return 'Po llogaritet lëvizja…';
     final String side = _game.side == white ? 'I bardhi' : 'I ziu';
     if (st.check) return '$side është në shah.';
     if (widget.variant == Variant.antichess) return '$side duhet të hajë nëse mundet.';

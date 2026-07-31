@@ -6,15 +6,19 @@
     "🚨 Shënimet i shihen testuesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
     "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
     "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
+    "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
     "🚨 «gjendja»: sa kohë aplikacioni është «Draft» te Console-i, Play pranon VETËM «draft» —",
     "   një «completed» bie te :commit me «Only releases with status draft may be created on",
     "   draft app», dhe bie PASI AAB-ja ka hipur. Pas publikimit të parë ktheje në «completed».",
+    "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
+    "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
+    "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
     "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
   ],
   "gjendja": "draft",
-  "emri": "2.3.0 (5) — figura pa qenie të gjalla, PGN",
+  "emri": "2.4.0 (6) — enigmat dhe ikona pa figurë",
   "shenimet": {
-    "sq": "Figurat u rivizatuan: mbreti mban tani yllin tetëcepësh në vend të kryqit, dhe kalorësi është vetë lëvizja e tij — dy hapa lart, një anash — jo më kokë kali. E njëjta ikonë del edhe te ekrani kryesor.\n\n• I ri: «Kopjo lëvizjet» te shiriti i sipërm — loja del si PGN, gati për çdo vegël shahu.\n• Ikonat e menysë nuk kanë më fytyrë roboti as figura njerëzish.\n• Asgjë nuk ndryshoi te rregullat: i njëjti motor, të njëjtat pesë variante.",
-    "en-US": "The pieces were redrawn: the king now carries an eight-pointed star instead of a cross, and the knight is its own move — two up, one across — rather than a horse's head. The same mark is now the app icon.\n\n• New: \"Copy moves\" in the top bar — the game comes out as PGN, ready for any chess tool.\n• The menu icons no longer use a robot face or human figures.\n• Nothing changed in the rules: same engine, same five variants."
+    "sq": "Ikona është tani vetëm gjeometri: ylli tetëcepësh mbi fushat e tabelës, pa asnjë figurë.\n\n• I ri: «Enigma — gjej matin». 60 pozicione, mat në një ose dy lëvizje, secila e provuar nga motori. Punojnë pa internet.\n• I ri: faqja «Statistika» — lojërat, fitoret dhe enigmat e zgjidhura, vetëm në telefonin tënd.\n• «Kundër kompjuterit» quhet tani «Luaj vetëm».\n• Rregullat nuk ndryshuan: i njëjti motor, po ato pesë variante.",
+    "en-US": "The icon is now pure geometry: an eight-pointed star over the board squares, with no figure at all.\n\n• New: \"Puzzles — find the mate\". 60 positions, mate in one or two, each one verified by the engine. They work offline.\n• New: a \"Statistics\" page — games, wins and puzzles solved, kept on your phone only.\n• \"Against the computer\" is now called \"Play alone\".\n• The rules did not change: same engine, same five variants."
   }
 }

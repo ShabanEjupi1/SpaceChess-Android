@@ -1,6 +1,10 @@
 [
-  { "wait": 2500, "shot": "pamje-1-ballina" },
-  { "tap": [180, 222], "wait": 2500, "shot": "pamje-2-tabela" },
+  { "wait": 3000, "shot": "pamje-1-ballina" },
+
+  { "tap": [180, 344], "wait": 2600, "shot": "pamje-5-enigma" },
+  { "tap": [28, 28],   "wait": 1600 },
+
+  { "tap": [180, 222], "wait": 2600, "shot": "pamje-2-tabela" },
   { "tap": [201, 449], "wait": 900,  "shot": "pamje-3-levizjet" },
-  { "tap": [201, 363], "wait": 1200, "shot": "pamje-4-luajtur" }
+  { "tap": [201, 363], "wait": 1400, "shot": "pamje-4-luajtur" }
 ]

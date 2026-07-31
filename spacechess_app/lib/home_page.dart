@@ -6,8 +6,10 @@ import 'package:spacechess_engine/spacechess_engine.dart';
 
 import 'app/ads.dart';
 import 'app/prefs.dart';
+import 'app/stats_page.dart';
 import 'app/theme.dart';
 import 'game/game_page.dart';
+import 'game/puzzle_page.dart';
 import 'online/lobby_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -66,16 +68,19 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 12),
                     ],
 
-                    // 🕌 Ikonat e kësaj menyje nuk kanë qenie të gjalla. Ishin
-                    // `smart_toy` (fytyrë roboti, me sy e gojë) dhe `people`
-                    // (dy bysta njerëzish) — pikërisht ato dilnin te pamjet e
-                    // Play-it. Zëvendësimet mbajnë të njëjtin kuptim pa figurë:
-                    // një çip për kompjuterin, dy shigjeta për radhën që kalon
-                    // nga njëri lojtar te tjetri. Mos i kthe.
+                    // 🕌 Ikonat e kësaj menyje nuk kanë qenie të gjalla dhe as
+                    // sende që zëvendësojnë një qenie. Historiku, që të mos
+                    // kthehet asnjë hap prapa:
+                    //   `smart_toy` (fytyrë roboti me sy e gojë) → `memory`
+                    //   (çip) → sot vetëm numri i lojtarëve.
+                    //   `people` (dy bysta njerëzish) → `swap_horiz` → «2».
+                    // Modaliteti nuk quhet më «Kundër kompjuterit»: emri e
+                    // ngrinte pajisjen në kundërshtar, kurse ajo vetëm zbaton
+                    // rregullat. Tani thotë thjesht sa veta luajnë.
                     FilledButton.icon(
                       onPressed: () => unawaited(_chooseLevel()),
-                      icon: const Icon(Icons.memory_rounded),
-                      label: const Text('Kundër kompjuterit'),
+                      icon: const Icon(Icons.looks_one_rounded),
+                      label: const Text('Luaj vetëm'),
                     ),
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
@@ -84,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                         colour: white,
                         variant: _variantOf(widget.prefs.variant),
                       ),
-                      icon: const Icon(Icons.swap_horiz_rounded),
+                      icon: const Icon(Icons.looks_two_rounded),
                       label: const Text('Dy lojtarë, një pajisje'),
                     ),
                     const SizedBox(height: 12),
@@ -96,6 +101,29 @@ class _HomePageState extends State<HomePage> {
                       )),
                       icon: const Icon(Icons.public),
                       label: const Text('Luaj online'),
+                    ),
+                    const SizedBox(height: 12),
+                    // Enigmat: e vetmja gjë këtu që nuk kërkon as kundërshtar
+                    // as rrjet. Prandaj rri mbi tabelën e varianteve dhe jo në
+                    // ndonjë meny të fshehur.
+                    OutlinedButton.icon(
+                      onPressed: () => unawaited(Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PuzzlePage(prefs: widget.prefs),
+                        ),
+                      ).then((_) => setState(() {}))),
+                      icon: const Icon(Icons.extension_outlined),
+                      label: const Text('Enigma — gjej matin'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => unawaited(Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => StatsPage(prefs: widget.prefs),
+                        ),
+                      )),
+                      icon: const Icon(Icons.bar_chart_rounded),
+                      label: const Text('Statistika'),
                     ),
 
                     const SizedBox(height: 32),

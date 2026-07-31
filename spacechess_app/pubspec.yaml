@@ -1,12 +1,12 @@
 name: spacechess
-description: "Mat! — shah kundër kompjuterit dhe online, në çdo pajisje."
+description: "Mat! — shah vetëm ose online, në çdo pajisje."
 publish_to: 'none'
 
 # 1.0.0+1 ishte mbështjellësi TWA (një skedë Chrome-i me ikonë). Ky është
 # aplikacioni i vërtetë, ndaj versioni i dukshëm nis nga 2.0.0 — por numri i
 # ndërtimit vazhdon nga aty ku e la, sepse Play-i nuk e pranon kurrë dy herë të
 # njëjtin versionCode.
-version: 2.3.0+5
+version: 2.4.0+6
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
