@@ -274,6 +274,43 @@ class _GamePageState extends State<GamePage> {
   /// lojtar që pranoi të shohë një reklamë nuk duhet ndëshkuar për një rrjet që
   /// nuk u përgjigj — dhe pa internet (ku loja kundër kompjuterit punon fare
   /// mirë) përndryshe kthimi do të bllokohej përgjithmonë pas lëvizjes së tretë.
+  /// Lëvizjet si PGN, në kujtesë.
+  ///
+  /// Trupi (`moveText`) vjen nga motori, që e mban SAN-in vetë; këtu shtohen
+  /// vetëm shtatë etiketat e detyrueshme të «Seven Tag Roster», pa të cilat
+  /// teksti hapet te disa vegla shahu dhe te të tjerat jo. Data shkruhet me
+  /// pikat e PGN-së (`2026.07.31`), jo me vija.
+  Future<void> _kopjoPgn() async {
+    final DateTime tani = DateTime.now();
+    String dy(int n) => n.toString().padLeft(2, '0');
+    final String kunder = widget.vsComputer
+        ? 'Mat! (${AiLevel.byId(widget.level).name})'
+        : 'Lojtari 2';
+    final bool bardhNjeriu = !widget.vsComputer || widget.humanColour == white;
+    final String pgn = <String>[
+      '[Event "Mat!"]',
+      '[Site "chess.spacecode.tech"]',
+      '[Date "${tani.year}.${dy(tani.month)}.${dy(tani.day)}"]',
+      '[Round "-"]',
+      '[White "${bardhNjeriu ? 'Lojtari' : kunder}"]',
+      '[Black "${bardhNjeriu ? kunder : 'Lojtari'}"]',
+      '[Result "${_pgnResult()}"]',
+      '',
+      '${_game.moveText} ${_pgnResult()}',
+    ].join('\n');
+
+    await Clipboard.setData(ClipboardData(text: pgn));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(const SnackBar(content: Text('Lëvizjet u kopjuan')));
+  }
+
+  /// `*` do të thotë «e papërfunduar» te PGN-ja dhe është përgjigjja e saktë
+  /// për një lojë që vazhdon — jo barazim. Kur loja ka mbaruar, vargu vjen
+  /// gati nga motori (`1-0` / `0-1` / `1/2-1/2`).
+  String _pgnResult() => _game.status.result ?? '*';
+
   Future<void> _undo() async {
     if (_game.moves.isEmpty || _thinking) return;
 
@@ -356,6 +393,12 @@ class _GamePageState extends State<GamePage> {
               ? AiLevel.byId(widget.level).name
               : 'Dy lojtarë'),
           actions: <Widget>[
+            IconButton(
+              tooltip: 'Kopjo lëvizjet (PGN)',
+              icon: const Icon(Icons.content_copy_outlined),
+              onPressed:
+                  _game.moves.isEmpty ? null : () => unawaited(_kopjoPgn()),
+            ),
             IconButton(
               tooltip: 'Kthe një lëvizje',
               icon: const Icon(Icons.undo),

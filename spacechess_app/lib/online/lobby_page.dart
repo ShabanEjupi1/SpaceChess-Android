@@ -107,7 +107,7 @@ class _LobbyPageState extends State<LobbyPage> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: const Icon(Icons.person_outline),
+              leading: const Icon(Icons.label_outline),
               title: const Text('Llogaria'),
               subtitle: Text(widget.prefs.name.isEmpty
                   ? 'Mysafir — pa emër, pa email, pa fjalëkalim'
