@@ -141,7 +141,7 @@ class _LobbyPageState extends State<LobbyPage> {
                 'Emri, vlerësimi dhe historiku yt fshihen nga serveri dhe nuk '
                 'kthehen mbrapsht.\n\n'
                 'Lojërat e luajtura mbeten te kundërshtarët, por pa emrin tënd.\n\n'
-                'Loja kundër kompjuterit dhe ajo në një pajisje vazhdojnë të '
+                'Loja vetëm dhe ajo në një pajisje vazhdojnë të '
                 'punojnë — ato nuk kërkojnë llogari.'),
             actions: <Widget>[
               TextButton(

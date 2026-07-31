@@ -15,7 +15,7 @@ import 'api.dart';
 const Map<String, String> arsyet = <String, String>{
   'emri': 'Emër i papërshtatshëm',
   'sjellja': 'Sjellje fyese',
-  'mashtrim': 'Mashtrim (ndihmë nga kompjuteri)',
+  'mashtrim': 'Mashtrim (ndihmë nga një program)',
   'tjeter': 'Diçka tjetër',
 };
 
