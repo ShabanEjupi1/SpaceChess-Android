@@ -83,10 +83,20 @@ async function call(url, { method = 'GET', json, raw, type } = {}) {
 // 🚨 Play-i i pret shënimet deri në 500 shkronja për gjuhë dhe VETËM për gjuhët
 // që ekzistojnë te listimi. Një gjuhë e panjohur e rrëzon `:commit`-in, jo
 // ngarkimin — pra dështon në fund, pasi AAB-ja tashmë ka hipur.
+//
+// 🚨 `gjendja` (statusi i lëshimit) NUK është shije:
+//   • sa kohë aplikacioni është ende «Draft» te Console-i — pra nuk ka dalë
+//     kurrë te asnjë gjurmë e shqyrtuar — API-ja pranon VETËM `draft`. Një
+//     `completed` bie me
+//     «Only releases with status draft may be created on draft app» te `:commit`,
+//     dhe bie PASI AAB-ja ka hipur, që duket sikur ngarkimi dështoi krejt.
+//   • pasi aplikacioni të jetë publikuar një herë, `completed` e nxjerr
+//     lëshimin te testuesit vetë; `draft` do të priste një klikim te Console-i.
 function leshimi(versionCode) {
   const rel = { status: 'completed', versionCodes: [String(versionCode)] };
   if (!notesPath) return rel;
   const conf = JSON.parse(readFileSync(notesPath, 'utf8'));
+  if (conf.gjendja) rel.status = conf.gjendja;
   if (conf.emri) rel.name = conf.emri;
   const notes = Object.entries(conf.shenimet ?? {});
   if (notes.length) {
