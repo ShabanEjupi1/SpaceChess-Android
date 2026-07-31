@@ -97,7 +97,17 @@ function leshimi(versionCode) {
   if (!notesPath) return rel;
   const conf = JSON.parse(readFileSync(notesPath, 'utf8'));
   if (conf.gjendja) rel.status = conf.gjendja;
-  if (conf.emri) rel.name = conf.emri;
+  if (conf.emri) {
+    // 🚨 Emri i lëshimit: MAKS 50 SHKRONJA. Play-i e kthen këtë si 400 te
+    // `:commit`, pra PASI AAB-ja ka hipur — dhe ndërtimi duket sikur dështoi
+    // krejt. U kap më 2026-07-31 me një emër 62-shkronjësh te Tokërrgjiku,
+    // ndërsa i shahut (46) kaloi: pra gabimi godet vetëm njërën depo dhe duket
+    // si diçka tjetër. Matet KËTU, para çdo kërkese rrjeti.
+    if (conf.emri.length > 50) {
+      throw new Error(`emri i lëshimit: ${conf.emri.length} > 50 shkronja`);
+    }
+    rel.name = conf.emri;
+  }
   const notes = Object.entries(conf.shenimet ?? {});
   if (notes.length) {
     rel.releaseNotes = notes.map(([language, text]) => ({ language, text }));
