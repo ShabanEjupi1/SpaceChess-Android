@@ -23,6 +23,16 @@ class SpaceChessApi {
   final http.Client _client;
   final String base;
 
+  /// Id-ja e lojtarit që rri pas këtij tokeni. Duhet për dy gjëra që s'i thotë
+  /// dot asgjë tjetër: cila anë je te një lojë, dhe kë po raporton.
+  String? userId;
+
+  /// Mesazhi i fundit i gabimit që erdhi NGA serveri (jo nga rrjeti). Filtri i
+  /// emrave përgjigjet me 400 dhe me një shpjegim shqip; pa e mbajtur këtu,
+  /// aplikacioni do të thoshte «serveri nuk u përgjigj» për një emër të
+  /// refuzuar — dhe lojtari do të provonte të njëjtin emër përjetësisht.
+  String? lastError;
+
   Map<String, String> get _headers => <String, String>{
         'accept': 'application/json',
         'content-type': 'application/json',
@@ -33,12 +43,16 @@ class SpaceChessApi {
   /// çdo rrugë tjetër përveç `/api/health`, `/api/config` dhe `/api/leaderboard`
   /// kthen 401 pa të.
   Future<Map<String, dynamic>?> session({String? name}) async {
+    lastError = null;
     final http.Response r = await _client.post(
       Uri.parse('$base/api/session'),
       headers: _headers,
       body: jsonEncode(<String, dynamic>{if (name != null) 'name': name}),
     );
-    if (r.statusCode != 200) return null;
+    if (r.statusCode != 200) {
+      lastError = _errorOf(r);
+      return null;
+    }
 
     // Tokeni vjen VETËM te përgjigjja e parë, kur llogaria krijohet. Nëse humbet
     // këtu, humbet përgjithmonë — bashkë me pikët e lojtarit.
@@ -48,10 +62,55 @@ class SpaceChessApi {
           RegExp(r'sc_token=([^;]+)').firstMatch(setCookie);
       if (m != null) await prefs.setToken(m.group(1)!);
     }
-    return _decode(r);
+    final Map<String, dynamic>? body = _decode(r);
+    userId = (body?['user'] as Map<String, dynamic>?)?['id'] as String?;
+    return body;
   }
 
-  Future<Map<String, dynamic>?> me() => _get('/api/me');
+  /// Raporton një lojtar tjetër. E kërkon politika e Google Play-t për
+  /// përmbajtjen e krijuar nga përdoruesit: emrat shfaqen publikisht, ndaj
+  /// krahas filtrit duhet edhe një rrugë me të cilën lojtarët i njoftojnë ata
+  /// që filtri nuk i kap.
+  ///
+  /// Arsyet janë listë e mbyllur (`emri`, `sjellja`, `mashtrim`, `tjeter`) —
+  /// një kuti me tekst të lirë do të ishte vetë UGC.
+  Future<bool> report(String target, String reason, {String? game}) async {
+    lastError = null;
+    try {
+      final http.Response r = await _client.post(
+        Uri.parse('$base/api/report'),
+        headers: _headers,
+        body: jsonEncode(<String, dynamic>{
+          'target': target,
+          'reason': reason,
+          if (game != null) 'game': game,
+        }),
+      );
+      if (r.statusCode == 200) return true;
+      lastError = _errorOf(r);
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  String? _errorOf(http.Response r) {
+    try {
+      final Object? decoded = jsonDecode(utf8.decode(r.bodyBytes));
+      if (decoded is Map<String, dynamic> && decoded['error'] is String) {
+        return decoded['error'] as String;
+      }
+    } catch (_) {
+      // Një përgjigje pa JSON nuk ka çfarë t'i thotë lojtarit.
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> me() async {
+    final Map<String, dynamic>? r = await _get('/api/me');
+    userId ??= (r?['user'] as Map<String, dynamic>?)?['id'] as String?;
+    return r;
+  }
   Future<Map<String, dynamic>?> config() => _get('/api/config');
   Future<Map<String, dynamic>?> lobby() => _get('/api/lobby');
   Future<Map<String, dynamic>?> leaderboard() => _get('/api/leaderboard');

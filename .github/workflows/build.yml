@@ -153,8 +153,14 @@ jobs:
           if-no-files-found: error
 
   # ── Play ──────────────────────────────────────────────────────────────────
+  #
+  # 🚨 Gjurma është `alpha` (= **Closed testing**), jo `internal`. Gjurma e
+  # brendshme është e vetmja që Google-i nuk e shqyrton: ajo NUK e nxjerr
+  # aplikacionin nga «Draft» dhe NUK numërohet për rregullin «12 testues × 14
+  # ditë» që kërkohet nga një llogari personale para prodhimit. Një ngarkim atje
+  # duket sikur ecën dhe nuk e afron publikimin as një ditë.
   play:
-    name: Play (gjurma e brendshme)
+    name: Play (testimi i mbyllur)
     if: startsWith(github.ref, 'refs/tags/v')
     needs: android
     runs-on: ubuntu-latest
@@ -175,8 +181,11 @@ jobs:
             exit 0
           fi
           printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/play.json"
+          # Emri i lëshimit dhe shënimet sq+en-US vijnë nga depoja, që të mos
+          # shkruhen me dorë te Console-i në çdo ngarkim.
           node tools/play.mjs "$RUNNER_TEMP/play.json" ngarko \
             tech.spacecode.chess \
             dist/bundle/release/app-release.aab \
-            internal
+            alpha \
+            store/shenimet.json
           rm -f "$RUNNER_TEMP/play.json"

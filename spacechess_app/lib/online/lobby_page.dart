@@ -6,6 +6,7 @@ import '../app/prefs.dart';
 import '../app/theme.dart';
 import 'api.dart';
 import 'online_page.dart';
+import 'report_sheet.dart';
 
 /// Salla: hap një lojë të re ose hyr te një e hapur.
 class LobbyPage extends StatefulWidget {
@@ -54,7 +55,10 @@ class _LobbyPageState extends State<LobbyPage> {
     if (me == null) {
       setState(() {
         _busy = false;
-        _error = 'Serveri nuk u përgjigj. Kontrollo internetin.';
+        // Një emër i refuzuar nga filtri kthen 400 me shpjegim shqip. Pa këtë
+        // rresht do të shkruante «serveri nuk u përgjigj» — dhe lojtari do ta
+        // provonte të njëjtin emër përjetësisht.
+        _error = _api.lastError ?? 'Serveri nuk u përgjigj. Kontrollo internetin.';
       });
       return;
     }
@@ -273,14 +277,36 @@ class _LobbyPageState extends State<LobbyPage> {
               const Text('Renditja',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
+              // Emrat këtu janë të shkruar nga vetë lojtarët dhe shihen nga të
+              // gjithë: prandaj çdo rresht mban edhe rrugën e raportimit që
+              // Google Play e kërkon për përmbajtjen e krijuar nga përdoruesit.
               ..._board.take(10).map((dynamic p) {
                 final Map<String, dynamic> u = p as Map<String, dynamic>;
+                final String id = '${u['id'] ?? ''}';
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                   title: Text('${u['name'] ?? 'Anonim'}'),
-                  trailing: Text('${u['rating'] ?? ''}',
-                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('${u['rating'] ?? ''}',
+                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                      IconButton(
+                        icon: const Icon(Icons.report_outlined, size: 20),
+                        tooltip: 'Raporto',
+                        visualDensity: VisualDensity.compact,
+                        onPressed: id.isEmpty || id == _api.userId
+                            ? null
+                            : () => unawaited(showReportSheet(
+                                  context: context,
+                                  api: _api,
+                                  targetId: id,
+                                  targetName: '${u['name'] ?? 'Anonim'}',
+                                )),
+                      ),
+                    ],
+                  ),
                 );
               }),
             ],
