@@ -2,7 +2,8 @@
 // Google Play Developer API — pa asnjë varësi.
 //
 //   node play.mjs <sherbimi.json> kontrollo <paketa>
-//   node play.mjs <sherbimi.json> ngarko    <paketa> <skedari.aab> [gjurma]
+//   node play.mjs <sherbimi.json> ngarko    <paketa> <skedari.aab> [gjurma] [shenimet.json]
+//   node play.mjs <sherbimi.json> promovo   <paketa> <versionCode>  [gjurma] [shenimet.json]
 //
 // `kontrollo` është hapi i parë dhe i vetmi që duhet të besohet: ai thotë nëse
 // llogaria e shërbimit e sheh vërtet aplikacionin. Tri gjëra ndryshme dështojnë
@@ -19,9 +20,10 @@
 import { readFileSync } from 'node:fs';
 import { createSign } from 'node:crypto';
 
-const [, , keyPath, cmd, pkg, aabPath, track = 'internal'] = process.argv;
+const [, , keyPath, cmd, pkg, aabPath, track = 'internal', notesPath] = process.argv;
 if (!keyPath || !cmd || !pkg) {
-  console.error('përdorimi: play.mjs <sherbimi.json> kontrollo|ngarko <paketa> [aab] [gjurma]');
+  console.error('përdorimi: play.mjs <sherbimi.json> kontrollo|ngarko|promovo|listimi|gjendja ' +
+    '<paketa> [aab|versionCode|listimi.json] [gjurma] [shenimet.json]');
   process.exit(2);
 }
 
@@ -73,6 +75,29 @@ async function call(url, { method = 'GET', json, raw, type } = {}) {
   return text ? JSON.parse(text) : {};
 }
 
+// Emri i lëshimit dhe shënimet për çdo gjuhë, nga një skedar i vetëm te depoja
+// (`store/shenimet.json`). Rrinë te git-i e jo te Console-i sepse janë pjesë e
+// lëshimit njësoj si AAB-ja: një ngarkim pa to del te testuesit me emrin e
+// zhveshur «3 (2.1.0)» dhe pa asnjë rresht se çfarë ndryshoi.
+//
+// 🚨 Play-i i pret shënimet deri në 500 shkronja për gjuhë dhe VETËM për gjuhët
+// që ekzistojnë te listimi. Një gjuhë e panjohur e rrëzon `:commit`-in, jo
+// ngarkimin — pra dështon në fund, pasi AAB-ja tashmë ka hipur.
+function leshimi(versionCode) {
+  const rel = { status: 'completed', versionCodes: [String(versionCode)] };
+  if (!notesPath) return rel;
+  const conf = JSON.parse(readFileSync(notesPath, 'utf8'));
+  if (conf.emri) rel.name = conf.emri;
+  const notes = Object.entries(conf.shenimet ?? {});
+  if (notes.length) {
+    rel.releaseNotes = notes.map(([language, text]) => ({ language, text }));
+    for (const [lang, text] of notes) {
+      if (text.length > 500) throw new Error(`shënimet ${lang}: ${text.length} > 500 shkronja`);
+    }
+  }
+  return rel;
+}
+
 if (cmd === 'kontrollo') {
   const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
   const tracks = await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks`);
@@ -100,7 +125,7 @@ if (cmd === 'kontrollo') {
 
   await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks/${track}`, {
     method: 'PUT',
-    json: { track, releases: [{ status: 'completed', versionCodes: [String(bundle.versionCode)] }] },
+    json: { track, releases: [leshimi(bundle.versionCode)] },
   });
   console.log(`… u vendos te gjurma «${track}»`);
 
@@ -125,14 +150,7 @@ if (cmd === 'kontrollo') {
   const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
   await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks/${track}`, {
     method: 'PUT',
-    json: {
-      track,
-      releases: [{
-        status: 'completed',
-        versionCodes: [String(aabPath)],
-        releaseNotes: [{ language: 'sq', text: 'Version i parë për testim.' }],
-      }],
-    },
+    json: { track, releases: [leshimi(aabPath)] },
   });
   await call(`${API}/applications/${pkg}/edits/${edit.id}:commit`, { method: 'POST' });
   console.log(`✓ ${pkg} ${aabPath} → ${track}`);

@@ -1,0 +1,15 @@
+{
+  "_koment": [
+    "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
+    "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab alpha store/shenimet.json",
+    "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
+    "🚨 Shënimet i shihen testuesit: deri në 500 shkronja për gjuhë, dhe VETËM për gjuhët që",
+    "   ekzistojnë te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
+    "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
+  ],
+  "emri": "2.2.0 (4) — aplikacioni vendas, testim i mbyllur",
+  "shenimet": {
+    "sq": "Ky është aplikacioni i parë i vërtetë i «Mat!» — jo më një dritare mbi faqen.\n\n• Motori i shahut punon në telefon: luaj kundër kompjuterit pa internet.\n• Loja online: kundërshtar i rastësishëm ose lojë me shok, me pikë Elo.\n• Pesë variante: standard, Chess960, Kodra, Tre shahe, Antishah.\n• Emrat e lojtarëve filtrohen, dhe çdo lojtar mund të raportohet nga tabela e renditjes ose nga loja.\n• Fshirja e llogarisë brenda aplikacionit: Online → ⚙ → Fshi llogarinë.\n• Reklama vetëm te menyja dhe pas lojës — kurrë mbi tabelë.",
+    "en-US": "The first real Mat! app — no longer a window onto the website.\n\n• The chess engine runs on the phone: play the computer with no internet.\n• Online play: random opponent or a game with a friend, with Elo ratings.\n• Five variants: standard, Chess960, King of the Hill, Three-check, Antichess.\n• Player names are filtered, and any player can be reported from the leaderboard or from a game.\n• Delete your account inside the app: Online → ⚙ → Delete account.\n• Ads only in the menu and after a game — never on the board."
+  }
+}

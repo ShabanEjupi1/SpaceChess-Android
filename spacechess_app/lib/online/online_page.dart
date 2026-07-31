@@ -7,6 +7,7 @@ import '../app/prefs.dart';
 import '../app/theme.dart';
 import '../board/board_view.dart';
 import 'api.dart';
+import 'report_sheet.dart';
 
 /// Loja online: një tabelë e vetme e drejtuar nga serveri.
 ///
@@ -78,17 +79,53 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
         orElse: () => Variant.standard,
       );
 
-  /// Serveri nuk e thotë drejtpërdrejt se cila anë je; e thotë me emrat e
+  /// Serveri nuk e thotë drejtpërdrejt se cila anë je; e thotë me id-në e
   /// lojtarëve. Kur asnjëri nuk je ti, je shikues — dhe tabela mbetet vetëm
   /// për t'u parë.
+  ///
+  /// 🚨 Këtu rrinte një krahasim me `players['w']['me']`, dy fusha që serveri
+  /// NUK i dërgon kurrë: çelësat janë `white`/`black` dhe s'ka asnjë `me`. Pra
+  /// ngjyra dilte gjithmonë null, tabela s'pranonte asnjë prekje dhe loja online
+  /// e aplikacionit ishte e paluajtshme — pa asnjë gabim në ekran.
   String? _guessColour(Map<String, dynamic> g) {
     final Object? players = g['players'];
-    if (players is! Map) return null;
-    for (final String side in <String>['w', 'b']) {
-      final Object? p = players[side];
-      if (p is Map && p['me'] == true) return side;
+    if (players is! Map || widget.api.userId == null) return null;
+    for (final MapEntry<String, String> side
+        in const <String, String>{'white': 'w', 'black': 'b'}.entries) {
+      final Object? p = players[side.key];
+      if (p is Map && p['id'] == widget.api.userId) return side.value;
     }
     return null;
+  }
+
+  Map<String, dynamic>? _seat(Map<String, dynamic> g, String side) {
+    final Object? players = g['players'];
+    if (players is! Map) return null;
+    return players[side == 'w' ? 'white' : 'black'] as Map<String, dynamic>?;
+  }
+
+  /// Raportimi i kundërshtarit. Emri i tij është përmbajtje e krijuar nga
+  /// përdoruesi dhe shfaqet këtu, mbi tabelë — pra Google Play kërkon një rrugë
+  /// raportimi pikërisht aty ku shihet.
+  Future<void> _reportOpponent() async {
+    final Map<String, dynamic>? g = _game;
+    if (g == null) return;
+    final Map<String, dynamic>? opp =
+        _seat(g, _myColour == 'w' ? 'b' : 'w');
+    final String? id = opp?['id'] as String?;
+    if (id == null || id == 'ai' || id.startsWith('fshire:')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('S\'ka kë të raportosh këtu.')),
+      );
+      return;
+    }
+    await showReportSheet(
+      context: context,
+      api: widget.api,
+      targetId: id,
+      targetName: '${opp?['name'] ?? 'Kundërshtari'}',
+      gameId: widget.gameId,
+    );
   }
 
   bool get _myTurn =>
@@ -197,6 +234,11 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
       appBar: AppBar(
         title: Text('${g['variant']} · ${(g['tc'] as Map<String, dynamic>)['id']}'),
         actions: <Widget>[
+          IconButton(
+            tooltip: 'Raporto kundërshtarin',
+            icon: const Icon(Icons.report_outlined),
+            onPressed: () => unawaited(_reportOpponent()),
+          ),
           if (!over && _myColour != null)
             IconButton(
               tooltip: 'Dorëzohu',
@@ -265,10 +307,9 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
   }
 
   Widget _clockBar(Map<String, dynamic> g, String side) {
-    final Map<String, dynamic>? players = g['players'] as Map<String, dynamic>?;
-    final Object? player = players?[side];
+    final Map<String, dynamic>? player = _seat(g, side);
     final String name =
-        player is Map && player['name'] != null ? '${player['name']}' : 'Kundërshtari';
+        player?['name'] != null ? '${player!['name']}' : 'Kundërshtari';
     final Map<String, dynamic>? clock = g['clock'] as Map<String, dynamic>?;
     final int ms = (clock?[side] as num?)?.round() ?? 0;
     final bool active = g['turn'] == side && g['status'] == 'active';
