@@ -66,9 +66,15 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 12),
                     ],
 
+                    // 🕌 Ikonat e kësaj menyje nuk kanë qenie të gjalla. Ishin
+                    // `smart_toy` (fytyrë roboti, me sy e gojë) dhe `people`
+                    // (dy bysta njerëzish) — pikërisht ato dilnin te pamjet e
+                    // Play-it. Zëvendësimet mbajnë të njëjtin kuptim pa figurë:
+                    // një çip për kompjuterin, dy shigjeta për radhën që kalon
+                    // nga njëri lojtar te tjetri. Mos i kthe.
                     FilledButton.icon(
                       onPressed: () => unawaited(_chooseLevel()),
-                      icon: const Icon(Icons.smart_toy_outlined),
+                      icon: const Icon(Icons.memory_rounded),
                       label: const Text('Kundër kompjuterit'),
                     ),
                     const SizedBox(height: 12),
@@ -78,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                         colour: white,
                         variant: _variantOf(widget.prefs.variant),
                       ),
-                      icon: const Icon(Icons.people_outline),
+                      icon: const Icon(Icons.swap_horiz_rounded),
                       label: const Text('Dy lojtarë, një pajisje'),
                     ),
                     const SizedBox(height: 12),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:spacechess_engine/spacechess_engine.dart';
 
@@ -114,25 +116,39 @@ Path _bishop() {
   return p;
 }
 
+/// 🕌 Ishte një kokë kali, me sy. Tani është **vetë lëvizja e kalorësit**: dy
+/// hapa lart, një anash — një «L» e trashë, e pjerrët nga maja.
+///
+/// Nuk humb asgjë. Silueta mbetet e vetmja asimetrike te tabela, ndaj lexohet
+/// te 36 pikselë edhe më shpejt se koka e kalit (asnjë figurë tjetër nuk ka
+/// krah anash), dhe tani forma e shpjegon lëvizjen në vend që ta zbukurojë.
 Path _knight() {
-  // Një kokë kali e kthyer majtas. Vijat janë të pakta me qëllim: një siluetë e
-  // qartë lexohet te 36 pikselë, ku çdo hollësi bëhet baltë.
   final Path p = Path()
-    ..moveTo(32, 76)
-    ..lineTo(32, 64)
-    ..cubicTo(32, 52, 38, 44, 49, 39)
-    ..lineTo(37, 41)
-    ..lineTo(28, 49)
-    ..lineTo(26, 41)
-    ..lineTo(34, 31)
-    ..cubicTo(38, 21, 46, 14, 55, 12)
-    ..lineTo(53, 21)
-    ..lineTo(62, 16)
-    ..cubicTo(72, 28, 72, 52, 68, 64)
-    ..lineTo(68, 76)
+    ..moveTo(31, 76)
+    ..lineTo(31, 28)
+    ..lineTo(39, 14)
+    ..lineTo(52, 14)
+    ..lineTo(52, 54)
+    ..lineTo(71, 54)
+    ..lineTo(71, 76)
     ..close();
   _addBase(p);
   return p;
+}
+
+/// Yll tetëcepësh (*shems*), i vizatuar në drejtim orar që të bashkohet me
+/// nënshtigjet e tjera nën `PathFillType.nonZero` — një yll në drejtim të
+/// kundërt do të hapte vrimë në vend që të mbushte.
+Path _yllTetecepesh(Offset c, double jashtem, double brendshem) {
+  final Path p = Path();
+  const int cepa = 8;
+  for (int i = 0; i < cepa * 2; i++) {
+    final double r = i.isEven ? jashtem : brendshem;
+    final double kend = -pi / 2 + i * pi / cepa;
+    final Offset pika = Offset(c.dx + r * cos(kend), c.dy + r * sin(kend));
+    i == 0 ? p.moveTo(pika.dx, pika.dy) : p.lineTo(pika.dx, pika.dy);
+  }
+  return p..close();
 }
 
 Path _queen() {
@@ -163,10 +179,11 @@ Path _queen() {
 
 Path _king() {
   final Path p = Path()
-    // Kryqi mbi kurorë — e vetmja shenjë që e dallon mbretin nga mbretëresha
-    // me një vështrim.
-    ..addRRect(RRect.fromLTRBR(46, 6, 54, 30, const Radius.circular(2)))
-    ..addRRect(RRect.fromLTRBR(39, 13, 61, 21, const Radius.circular(2)))
+    // 🕌 Mbi kurorë rrinte një KRYQ. Tani rri ylli tetëcepësh: e njëjta punë
+    // vizuale — një majë e vetme, e madhe, që e dallon mbretin nga pesë topat e
+    // mbretëreshës me një vështrim — pa shenjën fetare të një feje tjetër.
+    // Maja e poshtme e yllit takon kupolën te y≈34, ndaj figura mbetet e tërë.
+    ..addPath(_yllTetecepesh(const Offset(50, 20), 14, 6.2), Offset.zero)
     ..moveTo(31, 57)
     ..cubicTo(19, 43, 33, 27, 50, 36)
     ..cubicTo(67, 27, 81, 43, 69, 57)
@@ -187,12 +204,9 @@ void _details(Canvas canvas, int type, Paint stroke) {
   switch (type) {
     case bishop:
       canvas.drawLine(const Offset(50, 30), const Offset(50, 46), stroke);
-    case knight:
-      canvas.drawCircle(
-        const Offset(43, 33),
-        2.6,
-        Paint()..color = stroke.color,
-      );
+    // 🕌 Kalorësi kishte një sy (një rreth te koka e kalit). U hoq bashkë me
+    // kokën: forma e re është gjeometri, dhe një sy mbi të do të ishte pikërisht
+    // gjëja që u hoq, e ngjitur prapa.
     default:
       break;
   }
