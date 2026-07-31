@@ -263,6 +263,30 @@ if (cmd === 'kontrollo') {
 
   await call(`${API}/applications/${pkg}/edits/${edit.id}`, { method: 'DELETE' });
 
+} else if (cmd === 'zbraze') {
+  // Zbraz një gjurmë: `zbraze <paketa> <gjurma>`.
+  //
+  // 🚨 Kjo ekziston për një gjendje të vetme, që te Console-i duket si gabim
+  // i pashpjegueshëm: një lëshim i krijuar me dorë PA asnjë AAB. «Review
+  // release» atëherë tregon dy gabime njëherësh —
+  //   «This release does not add or remove any app bundles» (shkaku), dhe
+  //   «doesn't allow any existing users to upgrade» (pasoja) —
+  // dhe Console-i NUK jep asnjë buton «fshije këtë lëshim». E vetmja rrugë
+  // është t'i dërgosh gjurmës një listë lëshimesh BOSH, që bëhet vetëm nga
+  // API-ja. Pas kësaj gjurma kthehet e pastër dhe gabimet zhduken.
+  const track = process.argv[5];
+  if (!track) { console.error('jep gjurmën: zbraze <paketa> <gjurma>'); process.exit(2); }
+
+  const edit = await call(`${API}/applications/${pkg}/edits`, { method: 'POST', json: {} });
+  const para = await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks/${track}`);
+  console.log(`para: ${(para.releases ?? []).map(r =>
+    `${r.status} ${(r.versionCodes ?? []).join(',') || '—'}`).join(' | ') || 'bosh'}`);
+
+  await call(`${API}/applications/${pkg}/edits/${edit.id}/tracks/${track}`,
+    { method: 'PUT', json: { track, releases: [] } });
+  await call(`${API}/applications/${pkg}/edits/${edit.id}:commit`, { method: 'POST' });
+  console.log(`✓ gjurma ${track} u zbraz për ${pkg}`);
+
 } else {
   console.error(`urdhër i panjohur: ${cmd}`);
   process.exit(2);
