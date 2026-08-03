@@ -300,7 +300,7 @@ class _GamePageState extends State<GamePage> {
         : 'Lojtari 2';
     final bool bardhNjeriu = !widget.vsComputer || widget.humanColour == white;
     final String pgn = <String>[
-      '[Event "Mat!"]',
+      '[Event "Shah Mat"]',
       '[Site "chess.spacecode.tech"]',
       '[Date "${tani.year}.${dy(tani.month)}.${dy(tani.day)}"]',
       '[Round "-"]',

@@ -44,7 +44,7 @@ class MatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: 'Mat!',
+        title: 'Shah Mat',
         debugShowCheckedModeBanner: false,
         theme: buildTheme(),
         home: HomePage(prefs: prefs),

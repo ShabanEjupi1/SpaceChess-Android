@@ -15,10 +15,10 @@
     "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
     "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
   ],
-  "gjendja": "draft",
-  "emri": "2.4.0 (6) — enigmat dhe ikona pa figurë",
+  "gjendja": "completed",
+  "emri": "2.5.0 (7) — emri i ri: Shah Mat",
   "shenimet": {
-    "sq": "Ikona është tani vetëm gjeometri: ylli tetëcepësh mbi fushat e tabelës, pa asnjë figurë.\n\n• I ri: «Enigma — gjej matin». 60 pozicione, mat në një ose dy lëvizje, secila e provuar nga motori. Punojnë pa internet.\n• I ri: faqja «Statistika» — lojërat, fitoret dhe enigmat e zgjidhura, vetëm në telefonin tënd.\n• «Kundër kompjuterit» quhet tani «Luaj vetëm».\n• Rregullat nuk ndryshuan: i njëjti motor, po ato pesë variante.",
-    "en-US": "The icon is now pure geometry: an eight-pointed star over the board squares, with no figure at all.\n\n• New: \"Puzzles — find the mate\". 60 positions, mate in one or two, each one verified by the engine. They work offline.\n• New: a \"Statistics\" page — games, wins and puzzles solved, kept on your phone only.\n• \"Against the computer\" is now called \"Play alone\".\n• The rules did not change: same engine, same five variants."
+    "sq": "Aplikacioni quhet tani «Shah Mat».\n\n• Emri: «Mat!» ishte shumë i shkurtër për t'u gjetur te kërkimi i Play-it — pa fjalën «shah» brenda titullit, loja nuk dilte te kërkimet e zakonshme. Rregullat, motori dhe të dhënat e tua nuk ndryshojnë fare.\n• Pikët, statistikat dhe enigmat e zgjidhura mbeten ashtu siç ishin.",
+    "en-US": "The app is now called \"Shah Mat\".\n\n• The name: \"Mat!\" was too short to find in Play search — without the words \"shah\" or \"chess\" in the title, the game did not show up for ordinary queries. The rules, the engine and your data are unchanged.\n• Your rating, statistics and solved puzzles stay exactly as they were."
   }
 }

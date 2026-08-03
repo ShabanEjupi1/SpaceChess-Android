@@ -249,7 +249,7 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Column(
         children: <Widget>[
-          Text('Mat!',
+          Text('Shah Mat',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 44, fontWeight: FontWeight.w800, letterSpacing: -1)),
