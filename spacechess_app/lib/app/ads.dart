@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-/// Reklamat e «Mat!».
+/// Reklamat e «Shah Mat».
 ///
 /// Të gjitha rregullat rrinë KËTU, në një skedar, e jo të shpërndara nëpër
 /// ekrane — përndryshe «sa reklama ka kjo lojë» nuk ka përgjigje të lexueshme.
@@ -38,7 +38,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class Ads {
   Ads._();
 
-  /// Njësitë e vërteta të «Mat!» nga llogaria e AdMob-it
+  /// Njësitë e vërteta të «Shah Mat» nga llogaria e AdMob-it
   /// (`credentials.local.txt`, ndarja «chess AdMob»). Nuk janë sekret: një
   /// identifikues njësie del në çdo kërkesë reklame dhe lexohet nga APK-ja.
   ///
