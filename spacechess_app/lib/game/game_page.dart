@@ -421,79 +421,135 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
         body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              // 🔑 Të tria rrinë si një bllok i vetëm i qendërzuar, jo si dy
-              // rreshta të ngjitura te skajet me tabelën në mes: përndryshe në
-              // një ekran të gjatë emri i kundërshtarit del larg tabelës së tij
-              // dhe syri nuk i lidh më me njëri-tjetrin.
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints c) {
-                    // 🚨 Përmasa e tabelës llogaritet KËTU, nga hapësira e
-                    // vërtetë. Brenda një `Column`-i lartësia është e pakufizuar,
-                    // pra një tabelë që merr thjesht gjerësinë del jashtë ekranit
-                    // sapo dritarja të jetë më e gjerë se e lartë — çdo tablet i
-                    // kthyer, çdo desktop. Barra e dy rreshtave zbritet me një
-                    // lartësi FIKSE ([_Bar.height]) pikërisht që kjo llogari të
-                    // mos varet nga ajo që sapo është matur.
-                    const double gaps = 16;
-                    final double side = <double>[
-                      c.maxWidth - gaps,
-                      c.maxHeight - 2 * _Bar.height - gaps,
-                    ].reduce((double a, double b) => a < b ? a : b).clamp(0, 4096);
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints c) {
+              // Peizazh = tabela majtas, gjithçka tjetër në një shtyllë djathtas.
+              // Pa këtë, në një dritare 16:9 tabela kufizohet nga lartësia dhe
+              // gjysma e ekranit mbetet bosh me dy barra të tërhequra sa gjerësia
+              // — pikërisht pamja që Play Games on PC tregon sot.
+              final bool peizazh = c.maxWidth > c.maxHeight * 1.2;
+              return peizazh ? _peizazh(c, st) : _portret(c, st);
+            },
+          ),
+        ),
+      ),
+    );
+  }
 
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          _Bar(
-                            game: _game,
-                            colour: _flipped ? white : black,
-                            label: _nameFor(_flipped ? white : black),
-                            thinking: _thinking && !_humanTurn,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(gaps / 2),
-                            child: SizedBox.square(
-                              dimension: side,
-                              child: BoardView(
-                                position: _game.position,
-                                onTap: _onTap,
-                                selected: _selected,
-                                targets: _targets
-                                    .map((Move m) => m.to)
-                                    .toList(growable: false),
-                                lastMove: _lastMove,
-                                flipped: _flipped,
-                                interactive: _humanTurn && !_game.isOver,
-                              ),
-                            ),
-                          ),
-                          _Bar(
-                            game: _game,
-                            colour: _flipped ? black : white,
-                            label: _nameFor(_flipped ? black : white),
-                            thinking: false,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+  /// Tabela vetë — e njëjta në të dy paraqitjet, vetëm përmasa ndryshon.
+  Widget _tabela(double side) => SizedBox.square(
+        dimension: side,
+        child: BoardView(
+          position: _game.position,
+          onTap: _onTap,
+          selected: _selected,
+          targets: _targets.map((Move m) => m.to).toList(growable: false),
+          lastMove: _lastMove,
+          flipped: _flipped,
+          interactive: _humanTurn && !_game.isOver,
+        ),
+      );
+
+  _Bar _barra(bool siperm) => _Bar(
+        game: _game,
+        colour: siperm ? (_flipped ? white : black) : (_flipped ? black : white),
+        label: _nameFor(
+            siperm ? (_flipped ? white : black) : (_flipped ? black : white)),
+        thinking: siperm && _thinking && !_humanTurn,
+      );
+
+  /// 🔑 Të tria rrinë si një bllok i vetëm i qendërzuar, jo si dy rreshta të
+  /// ngjitura te skajet me tabelën në mes: përndryshe në një ekran të gjatë emri
+  /// i kundërshtarit del larg tabelës së tij dhe syri nuk i lidh më.
+  Widget _portret(BoxConstraints c, GameStatus st) {
+    const double gaps = 16;
+    // 🚨 Përmasa e tabelës llogaritet KËTU, nga hapësira e vërtetë. Brenda një
+    // `Column`-i lartësia është e pakufizuar, pra një tabelë që merr thjesht
+    // gjerësinë del jashtë ekranit sapo dritarja të jetë më e gjerë se e lartë.
+    // Barra e dy rreshtave zbritet me një lartësi FIKSE ([_Bar.height])
+    // pikërisht që kjo llogari të mos varet nga ajo që sapo është matur.
+    const double hintH = 46;
+    final double side = <double>[
+      c.maxWidth - gaps,
+      c.maxHeight - 2 * _Bar.height - hintH - gaps,
+    ].reduce((double a, double b) => a < b ? a : b).clamp(0, 4096);
+
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _barra(true),
+                Padding(
+                  padding: const EdgeInsets.all(gaps / 2),
+                  child: _tabela(side),
                 ),
-              ),
+                _barra(false),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+          child: Text(
+            _hint(st),
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Palette.textDim, fontSize: 15),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Peizazh: tabela sa lejon LARTËSIA, dhe shtylla anësore merr çka mbetet.
+  ///
+  /// Shtylla kufizohet te 320dp sepse mbi atë gjerësi emri dhe rreshti i
+  /// gjendjes nisin të notojnë larg tabelës; hapësira e tepërt shkon te
+  /// zbrazëtia jashtë të dyjave, e cila nuk e ndan syrin.
+  Widget _peizazh(BoxConstraints c, GameStatus st) {
+    const double gaps = 16;
+    const double anesorjaMax = 320;
+
+    final double side = <double>[
+      c.maxHeight - gaps,
+      c.maxWidth - gaps - 200, // të paktën aq sa lexohet shtylla
+    ].reduce((double a, double b) => a < b ? a : b).clamp(0, 4096);
+
+    final double anesorja =
+        (c.maxWidth - side - gaps).clamp(0, anesorjaMax).toDouble();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(gaps / 2),
+          child: _tabela(side),
+        ),
+        SizedBox(
+          width: anesorja,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _barra(true),
+              const SizedBox(height: 12),
+              _barra(false),
+              const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   _hint(st),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Palette.textDim, fontSize: 15),
+                  style:
+                      const TextStyle(color: Palette.textDim, fontSize: 15),
                 ),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 
