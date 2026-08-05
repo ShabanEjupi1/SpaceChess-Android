@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app/ads.dart';
+import 'app/orientation.dart';
 import 'app/prefs.dart';
 import 'app/theme.dart';
 import 'home_page.dart';
@@ -11,13 +12,11 @@ import 'home_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Tabela është katrore dhe asgjë këtu nuk fiton nga gjerësia; një rrotullim
-  // në mes të një radhe vetëm e humb lojtarin. Në tablet dhe desktop sistemi e
-  // shpërfill këtë kërkesë dhe tabela thjesht qendërzohet.
-  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // 🚨 Orientimi NUK kyçet më këtu. Supozimi i vjetër — «në tablet dhe desktop
+  // sistemi e shpërfill këtë kërkesë» — ishte i pasaktë: Google Play Games on
+  // PC e respekton, dhe loja dilte si shirit i ngushtë në mes të një ekrani të
+  // gjerë. Vendimi merret tani sipas madhësisë së dritares, te
+  // [OrientimiPershtatur], ku MediaQuery-ja është vërtet e matur.
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -47,6 +46,10 @@ class MatApp extends StatelessWidget {
         title: 'Shah Mat',
         debugShowCheckedModeBanner: false,
         theme: buildTheme(),
+        // `builder` dhe jo një mbështjellës rreth `home`-it: kështu rregulli
+        // vlen edhe për faqet e hapura me Navigator, jo vetëm për të parën.
+        builder: (BuildContext context, Widget? child) =>
+            OrientimiPershtatur(child: child ?? const SizedBox.shrink()),
         home: HomePage(prefs: prefs),
       );
 }
