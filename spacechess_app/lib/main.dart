@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app/ads.dart';
+import 'app/analitika.dart';
 import 'app/orientation.dart';
 import 'app/prefs.dart';
 import 'app/theme.dart';
@@ -31,6 +32,9 @@ Future<void> main() async {
   // një kërkesë rrjeti, pra do të mbante ekranin bosh sekonda të tëra në një
   // lidhje të dobët. Menyja hapet menjëherë dhe banderola shfaqet vetëm kur
   // (dhe nëse) vjen. Shih [Ads] — asnjë gabim prej tyre nuk del jashtë.
+  // Matja nis PARA reklamave: një hapje që dështon te formulari i pëlqimit
+  // duhet numëruar prapë, përndryshe humbasin pikërisht hapjet problematike.
+  unawaited(Analitika.nis());
   unawaited(Ads.start());
 
   runApp(MatApp(prefs: prefs));

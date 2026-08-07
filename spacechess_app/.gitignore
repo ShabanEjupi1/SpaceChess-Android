@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Konfigurimi i Firebase-it: identifikuesit e projektit + celesi Android.
+# Kopja e vetme e rezervuar rri te spacecode-brain/firebase/.
+google-services.json
