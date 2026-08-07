@@ -29,6 +29,20 @@ jobs:
         with:
           sdk: stable
 
+      - name: Vendos konfigurimin e Firebase-it
+        working-directory: spacechess_app
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          # ð¨ Pa kÃ«tÃ« skedar `flutter build appbundle` DÃSHTON qÃ«llimisht:
+          # `android/app/build.gradle.kts` hedh GradleException te njÃ« ndÃ«rtim
+          # lÃ«shimi. Kjo Ã«shtÃ« roja qÃ« zÃ«vendÃ«soi njÃ« AAB qÃ« hipte te Play me
+          # Analytics-in e vdekur pa e thÃ«nÃ« asnjÃ« shtresÃ«.
+          if [ -z "$GOOGLE_SERVICES_JSON_BASE64" ]; then
+            echo "::error::Mungon sekreti GOOGLE_SERVICES_JSON_BASE64."
+            exit 1
+          fi
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d > android/app/google-services.json
       - name: Motori — analiza dhe perft-i
         working-directory: engine
         run: |
