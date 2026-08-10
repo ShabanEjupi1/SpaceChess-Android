@@ -9,6 +9,7 @@ library;
 export 'src/ai.dart';
 export 'src/board.dart';
 // Katërshi rri veçmas nga [Position] me qëllim — shih krye të `src/four.dart`.
+export 'src/dora.dart';
 export 'src/four.dart';
 export 'src/game.dart';
 export 'src/moves.dart';
