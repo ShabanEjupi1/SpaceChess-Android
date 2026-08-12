@@ -1,24 +1,24 @@
 {
-  "_koment": [
-    "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
-    "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab alpha store/shenimet.json",
-    "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
-    "🚨 Shënimet i shihen testuesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
-    "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
-    "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
-    "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
-    "🚨 «gjendja»: sa kohë aplikacioni është «Draft» te Console-i, Play pranon VETËM «draft» —",
-    "   një «completed» bie te :commit me «Only releases with status draft may be created on",
-    "   draft app», dhe bie PASI AAB-ja ka hipur. Pas publikimit të parë ktheje në «completed».",
-    "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
-    "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
-    "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
-    "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
-  ],
-  "gjendja": "completed",
-  "emri": "2.5.0 (7) — emri i ri: Shah Mat",
-  "shenimet": {
-    "sq": "Aplikacioni quhet tani «Shah Mat».\n\n• Emri: «Mat!» ishte shumë i shkurtër për t'u gjetur te kërkimi i Play-it — pa fjalën «shah» brenda titullit, loja nuk dilte te kërkimet e zakonshme. Rregullat, motori dhe të dhënat e tua nuk ndryshojnë fare.\n• Pikët, statistikat dhe enigmat e zgjidhura mbeten ashtu siç ishin.",
-    "en-US": "The app is now called \"Shah Mat\".\n\n• The name: \"Mat!\" was too short to find in Play search — without the words \"shah\" or \"chess\" in the title, the game did not show up for ordinary queries. The rules, the engine and your data are unchanged.\n• Your rating, statistics and solved puzzles stay exactly as they were."
-  }
+   "_koment" : [
+      "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
+      "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab alpha store/shenimet.json",
+      "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
+      "🚨 Shënimet i shihen testuesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
+      "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
+      "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
+      "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
+      "🚨 «gjendja»: sa kohë aplikacioni është «Draft» te Console-i, Play pranon VETËM «draft» —",
+      "   një «completed» bie te :commit me «Only releases with status draft may be created on",
+      "   draft app», dhe bie PASI AAB-ja ka hipur. Pas publikimit të parë ktheje në «completed».",
+      "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
+      "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
+      "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
+      "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
+   ],
+   "emri" : "2.6.0 (8) — Katërshi luhet vërtet",
+   "gjendja" : "completed",
+   "shenimet" : {
+      "en-US" : "Four-player chess is HERE. Until now the title promised it and the app did not have it — it only ran on the website. Now it opens straight from the menu:\n\n• Four people, one device: the phone goes hand to hand.\n• Or you against three computer opponents.\n\nThe board is a 14x14 cross, each army in its own colour. When a king falls that player is out but their pieces stay on the board — and the winner is whoever has the most points, not simply the last one standing.",
+      "sq" : "Katërshi është KËTU. Deri tani titulli e premtonte shahun me katër lojtarë dhe aplikacioni nuk e kishte — luhej vetëm te faqja. Tani hapet nga menyja:\n\n• Katër veta, një pajisje: telefoni kalon dorë më dorë.\n• Ose ti kundër tre kompjuterëve.\n\nTabela është 14×14 në formë kryqi, secili me ushtrinë e vet me ngjyrë. Kur një mbret bie, ai lojtar del po figurat e tij mbeten — dhe fiton ai me më shumë pikë, jo thjesht i fundit që mbijeton."
+   }
 }

@@ -22,15 +22,38 @@ void drawPiece(Canvas canvas, Rect box, int piece) {
   if (piece == empty || piece == off) return;
 
   final bool isWhite = piece > 0;
-  final Paint fill = Paint()
+  drawPieceShape(
+    canvas,
+    box,
+    piece.abs(),
+    fill: isWhite ? Palette.whitePiece : Palette.blackPiece,
+    ink: isWhite ? const Color(0xFF3A3733) : const Color(0xFFCFC9C0),
+  );
+}
+
+/// E njëjta figurë, po me ngjyrë të lirë.
+///
+/// 🔑 Ekziston sepse te Katërshi ushtritë janë KATËR, jo dy: kodimi
+/// «pozitiv = i bardhë» i [drawPiece] nuk shpreh dot as ngjyrën e tretë. Të dyja
+/// rrugët përfundojnë te të njëjtat shtigje — ndryshe dy tabelat e të njëjtit
+/// aplikacion do të kishin dy grupe figurash, dhe një ndreqje te njëra nuk do
+/// të shihej te tjetra.
+void drawPieceShape(
+  Canvas canvas,
+  Rect box,
+  int type, {
+  required Color fill,
+  required Color ink,
+}) {
+  final Paint body = Paint()
     ..style = PaintingStyle.fill
-    ..color = isWhite ? Palette.whitePiece : Palette.blackPiece;
+    ..color = fill;
   final Paint stroke = Paint()
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3.4
     ..strokeJoin = StrokeJoin.round
     ..strokeCap = StrokeCap.round
-    ..color = isWhite ? const Color(0xFF3A3733) : const Color(0xFFCFC9C0);
+    ..color = ink;
 
   canvas.save();
   canvas.translate(box.left, box.top);
@@ -43,7 +66,7 @@ void drawPiece(Canvas canvas, Rect box, int piece) {
     Paint()..color = const Color(0x33000000),
   );
 
-  final Path path = switch (piece.abs()) {
+  final Path path = switch (type) {
     pawn => _pawn(),
     knight => _knight(),
     bishop => _bishop(),
@@ -52,9 +75,9 @@ void drawPiece(Canvas canvas, Rect box, int piece) {
     _ => _king(),
   };
 
-  canvas.drawPath(path, fill);
+  canvas.drawPath(path, body);
   canvas.drawPath(path, stroke);
-  _details(canvas, piece.abs(), stroke);
+  _details(canvas, type, stroke);
   canvas.restore();
 }
 

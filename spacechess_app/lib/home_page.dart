@@ -8,6 +8,7 @@ import 'app/ads.dart';
 import 'app/prefs.dart';
 import 'app/stats_page.dart';
 import 'app/theme.dart';
+import 'game/four_page.dart';
 import 'game/game_page.dart';
 import 'game/puzzle_page.dart';
 import 'online/lobby_page.dart';
@@ -103,6 +104,15 @@ class _HomePageState extends State<HomePage> {
                       label: const Text('Luaj online'),
                     ),
                     const SizedBox(height: 12),
+                    // ♟️4️⃣ Katërshi. Rri KËTU, mbi enigmat, sepse titulli te
+                    // Google Play e premton që nga 11-08-2026 — dhe një veçori
+                    // që dyqani e reklamon nuk fshihet nën një meny.
+                    OutlinedButton.icon(
+                      onPressed: () => unawaited(_chooseFour()),
+                      icon: const Icon(Icons.looks_4_rounded),
+                      label: const Text('Katërshi — shah me katër'),
+                    ),
+                    const SizedBox(height: 12),
                     // Enigmat: e vetmja gjë këtu që nuk kërkon as kundërshtar
                     // as rrjet. Prandaj rri mbi tabelën e varianteve dhe jo në
                     // ndonjë meny të fshehur.
@@ -176,6 +186,45 @@ class _HomePageState extends State<HomePage> {
           ),
         ))
         .then((_) => setState(() {})));
+  }
+
+  /// Katërshi ka dy mënyra dhe asnjë nivel: truri i tij nuk është minimax, ndaj
+  /// «sa i fortë» nuk do të thoshte asgjë të matshme. Shih [FourBot].
+  Future<void> _chooseFour() async {
+    final FourMode? mode = await showModalBottomSheet<FourMode>(
+      context: context,
+      showDragHandle: true,
+      builder: (BuildContext context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Text('Shah me katër lojtarë',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.w700)),
+            ),
+            ListTile(
+              title: const Text('Ti kundër tre kompjuterëve'),
+              subtitle: const Text('Ti luan me të kuqet',
+                  style: TextStyle(color: Palette.textDim)),
+              onTap: () => Navigator.of(context).pop(FourMode.bots),
+            ),
+            ListTile(
+              title: const Text('Katër veta, një pajisje'),
+              subtitle: const Text('Telefoni kalon dorë më dorë',
+                  style: TextStyle(color: Palette.textDim)),
+              onTap: () => Navigator.of(context).pop(FourMode.pass),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (mode == null || !mounted) return;
+
+    await Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => FourPage(mode: mode),
+    ));
+    if (mounted) setState(() {});
   }
 
   Future<void> _chooseLevel() async {
