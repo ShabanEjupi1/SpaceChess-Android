@@ -140,20 +140,27 @@ Path _bishop() {
 }
 
 /// 🕌 Ishte një kokë kali, me sy. Tani është **vetë lëvizja e kalorësit**: dy
-/// hapa lart, një anash — një «L» e trashë, e pjerrët nga maja.
+/// hapa lart, një anash — dy shkallë të gdhendura mbi bazament.
 ///
 /// Nuk humb asgjë. Silueta mbetet e vetmja asimetrike te tabela, ndaj lexohet
 /// te 36 pikselë edhe më shpejt se koka e kalit (asnjë figurë tjetër nuk ka
 /// krah anash), dhe tani forma e shpjegon lëvizjen në vend që ta zbukurojë.
 Path _knight() {
   final Path p = Path()
-    ..moveTo(31, 76)
-    ..lineTo(31, 28)
-    ..lineTo(39, 14)
-    ..lineTo(52, 14)
-    ..lineTo(52, 54)
-    ..lineTo(71, 54)
-    ..lineTo(71, 76)
+    // 🔑 DY shkallë, jo një «L» e vetme, dhe me qoshet e prera (49→18, 63→43).
+    // I njëjti varg si `SHTIGJET[2]` te `linux-install/spacechess/static/
+    // figurat.mjs` — pikë për pikë. Ndryshon njëra, ndryshon tjetra.
+    ..moveTo(28, 76)
+    ..lineTo(28, 20)
+    ..lineTo(33, 14)
+    ..lineTo(46, 14)
+    ..lineTo(49, 18)
+    ..lineTo(49, 39)
+    ..lineTo(60, 39)
+    ..lineTo(63, 43)
+    ..lineTo(63, 57)
+    ..lineTo(72, 57)
+    ..lineTo(72, 76)
     ..close();
   _addBase(p);
   return p;

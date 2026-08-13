@@ -1,24 +1,25 @@
 {
    "_koment" : [
       "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
-      "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab alpha store/shenimet.json",
+      "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab production store/shenimet.json",
       "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
-      "🚨 Shënimet i shihen testuesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
+      "🚨 Shënimet i shohin përdoruesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
       "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
       "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
       "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
-      "🚨 «gjendja»: sa kohë aplikacioni është «Draft» te Console-i, Play pranon VETËM «draft» —",
-      "   një «completed» bie te :commit me «Only releases with status draft may be created on",
-      "   draft app», dhe bie PASI AAB-ja ka hipur. Pas publikimit të parë ktheje në «completed».",
+      "🚨 «gjendja» = «completed»: aplikacioni është botuar te prodhimi që nga 01-08-2026.",
       "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
       "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
       "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
+      "🚨 Shënimet flasin VETËM për atë që ndryshon te APLIKACIONI. Zmadhimi i tabelës së",
+      "   Katërshit i 13-08-2026 preku faqen (`katershi.css`), jo telefonin — te telefoni tabela",
+      "   merr tashmë gjithë gjerësinë. Një shënim për të do të premtonte ndryshim që s'vjen.",
       "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
    ],
-   "emri" : "2.6.0 (8) — Katërshi luhet vërtet",
+   "emri" : "2.7.0 (9) — kalorësi i rivizatuar",
    "gjendja" : "completed",
    "shenimet" : {
-      "en-US" : "Four-player chess is HERE. Until now the title promised it and the app did not have it — it only ran on the website. Now it opens straight from the menu:\n\n• Four people, one device: the phone goes hand to hand.\n• Or you against three computer opponents.\n\nThe board is a 14x14 cross, each army in its own colour. When a king falls that player is out but their pieces stay on the board — and the winner is whoever has the most points, not simply the last one standing.",
-      "sq" : "Katërshi është KËTU. Deri tani titulli e premtonte shahun me katër lojtarë dhe aplikacioni nuk e kishte — luhej vetëm te faqja. Tani hapet nga menyja:\n\n• Katër veta, një pajisje: telefoni kalon dorë më dorë.\n• Ose ti kundër tre kompjuterëve.\n\nTabela është 14×14 në formë kryqi, secili me ushtrinë e vet me ngjyrë. Kur një mbret bie, ai lojtar del po figurat e tij mbeten — dhe fiton ai me më shumë pikë, jo thjesht i fundit që mbijeton."
+      "sq" : "Kalorësi u rivizatua. Ishte një «L» e rrafshët; tani janë dy shkallë të gdhendura mbi të njëjtin bazament si figurat e tjera — dy hapa lart, një anash, pikërisht lëvizja që bën.\n\nNë tabelën e vogël të telefonit njihet me një vështrim, dhe pranë kalasë e oficerit nuk duket më si shkronjë e ngjitur mes figurash.",
+      "en-US" : "The knight has been redrawn. It was a flat «L»; now it is two carved steps on the same plinth as every other piece — two up, one across, exactly the move it makes.\n\nOn a phone-sized board you recognise it at a glance, and beside the rook and bishop it no longer looks like a letter dropped in among the pieces."
    }
 }
