@@ -19,9 +19,20 @@ Future<void> main() async {
   // gjerë. Vendimi merret tani sipas madhësisë së dritares, te
   // [OrientimiPershtatur], ku MediaQuery-ja është vërtet e matur.
 
+  // Nga Android 15 (API 35) çdo aplikacion vizaton **nën** shiritat e sistemit;
+  // ngjyra e tyre nuk caktohet më. Kërkesa bëhet shprehimisht, që sjellja të
+  // jetë e njëjtë edhe te Android 14 e poshtë, ku parazgjedhja është e kundërta.
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  // 🚨 `statusBarColor` dhe `systemNavigationBarColor` NUK jepen më. Ato dy fusha
+  // janë e vetmja gjë që e bën motorin e Flutter-it të thërrasë
+  // `Window.setStatusBarColor` / `setNavigationBarColor` — të dyja të vjetruara
+  // te Android 15, dhe të dyja të raportuara nga Play Console te lëshimi 2.7.0
+  // (gjurma `io.flutter.plugin.platform.d.m`). Me edge-to-edge shiritat janë
+  // gjithsesi të tejdukshëm, ndaj vlerat ishin edhe pa efekt.
+  // ⚠️ Ndriçimi i ikonave MBETET: ai kalon nga një rrugë tjetër
+  // (`WindowInsetsController`) dhe nuk është i vjetruar.
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    systemNavigationBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
     systemNavigationBarIconBrightness: Brightness.light,
   ));

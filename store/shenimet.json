@@ -16,10 +16,10 @@
       "   merr tashmë gjithë gjerësinë. Një shënim për të do të premtonte ndryshim që s'vjen.",
       "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
    ],
-   "emri" : "2.7.0 (9) — kalorësi i rivizatuar",
+   "emri" : "2.7.1 (10) — buzë më buzë te Android 15",
    "gjendja" : "completed",
    "shenimet" : {
-      "sq" : "Kalorësi u rivizatua. Ishte një «L» e rrafshët; tani janë dy shkallë të gdhendura mbi të njëjtin bazament si figurat e tjera — dy hapa lart, një anash, pikërisht lëvizja që bën.\n\nNë tabelën e vogël të telefonit njihet me një vështrim, dhe pranë kalasë e oficerit nuk duket më si shkronjë e ngjitur mes figurash.",
-      "en-US" : "The knight has been redrawn. It was a flat «L»; now it is two carved steps on the same plinth as every other piece — two up, one across, exactly the move it makes.\n\nOn a phone-sized board you recognise it at a glance, and beside the rook and bishop it no longer looks like a letter dropped in among the pieces."
+      "sq" : "Pamja u përshtat me Android 15: loja vizatohet tani nga buzë në buzë, dhe shiritat e sistemit nuk marrin më ngjyrë të huaj mbi tabelë.\n\nBrenda, ndërtimi kaloi te ngjeshja e plotë e burimeve — aplikacioni zë më pak memorie dhe hapet pak më shpejt te telefonat e vjetër.",
+      "en-US" : "The display now follows Android 15: the game is drawn edge to edge, and the system bars no longer take on a colour of their own over the board.\n\nUnder the hood the build moved to full resource shrinking — the app uses less memory and starts a little faster on older phones."
    }
 }
