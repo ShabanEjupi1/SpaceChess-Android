@@ -1,25 +1,25 @@
 {
-   "_koment" : [
-      "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
-      "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab production store/shenimet.json",
-      "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
-      "🚨 Shënimet i shohin përdoruesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
-      "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
-      "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
-      "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
-      "🚨 «gjendja» = «completed»: aplikacioni është botuar te prodhimi që nga 01-08-2026.",
-      "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
-      "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
-      "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
-      "🚨 Shënimet flasin VETËM për atë që ndryshon te APLIKACIONI. Zmadhimi i tabelës së",
-      "   Katërshit i 13-08-2026 preku faqen (`katershi.css`), jo telefonin — te telefoni tabela",
-      "   merr tashmë gjithë gjerësinë. Një shënim për të do të premtonte ndryshim që s'vjen.",
-      "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
-   ],
-   "emri" : "2.7.1 (10) — buzë më buzë te Android 15",
-   "gjendja" : "completed",
-   "shenimet" : {
-      "sq" : "Pamja u përshtat me Android 15: loja vizatohet tani nga buzë në buzë, dhe shiritat e sistemit nuk marrin më ngjyrë të huaj mbi tabelë.\n\nBrenda, ndërtimi kaloi te ngjeshja e plotë e burimeve — aplikacioni zë më pak memorie dhe hapet pak më shpejt te telefonat e vjetër.",
-      "en-US" : "The display now follows Android 15: the game is drawn edge to edge, and the system bars no longer take on a colour of their own over the board.\n\nUnder the hood the build moved to full resource shrinking — the app uses less memory and starts a little faster on older phones."
-   }
+  "_koment": [
+    "Emri i lëshimit dhe shënimet për çdo gjuhë, të lexuara nga tools/play.mjs:",
+    "  node play.mjs <çelësi.json> ngarko tech.spacecode.chess app.aab production store/shenimet.json",
+    "🚨 Emri NUK u shfaqet përdoruesve — shërben vetëm që ti ta dallosh lëshimin te Console-i.",
+    "🚨 Shënimet i shohin përdoruesit: KUFIRI ËSHTË 500 SHKRONJA për gjuhë (u kapërcye një herë",
+    "   me 522 dhe ngarkimi ra PASI AAB-ja kishte hipur tashmë), dhe vetëm gjuhët që ekzistojnë",
+    "   te listimi (sq dhe en-US). Një gjuhë e panjohur e rrëzon :commit-in.",
+    "🚨 Emri i lëshimit: maksimumi 50 shkronja. play.mjs i mat të dyja para rrjetit.",
+    "🚨 «gjendja» = «completed»: aplikacioni është botuar te prodhimi që nga 01-08-2026.",
+    "🚨 MOS e redakto këtë skedar me perl ose sed pa `-CSD`: një kalim i vetëm pa të e shkruan",
+    "   tekstin dy herë të koduar (ë → Ã«). JSON-i mbetet i vlefshëm, ndaj gabimi nuk duket",
+    "   derisa dikush ta lexojë shqipen te Console-i — dhe atëherë lëshimi ka hipur tashmë.",
+    "🚨 Shënimet flasin VETËM për atë që ndryshon te APLIKACIONI. Zmadhimi i tabelës së",
+    "   Katërshit i 13-08-2026 preku faqen (`katershi.css`), jo telefonin — te telefoni tabela",
+    "   merr tashmë gjithë gjerësinë. Një shënim për të do të premtonte ndryshim që s'vjen.",
+    "Kur ngrihet versioni, ndrysho emrin këtu dhe rreshtat që s'vlejnë më."
+  ],
+  "emri": "2.7.2 (11) — reklamat shfaqen përsëri",
+  "gjendja": "completed",
+  "shenimet": {
+    "sq": "U rregullua: reklamat nuk shfaqeshin fare — hapësira mbetej bosh dhe reklama me shpërblim nuk hapej kurrë. Tani ngarkohen si duhet.\n\nAsgjë tjetër nuk ndryshon: shahu, Katërshi dhe 960 luhen pikërisht si më parë.",
+    "en-US": "Fixed: ads were not showing at all — the space stayed blank and the rewarded ad never opened. They now load properly.\n\nNothing else changes: chess, 4-Player and 960 play exactly as before."
+  }
 }

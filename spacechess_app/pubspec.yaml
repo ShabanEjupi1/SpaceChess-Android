@@ -6,7 +6,7 @@ publish_to: 'none'
 # aplikacioni i vërtetë, ndaj versioni i dukshëm nis nga 2.0.0 — por numri i
 # ndërtimit vazhdon nga aty ku e la, sepse Play-i nuk e pranon kurrë dy herë të
 # njëjtin versionCode.
-version: 2.7.1+10
+version: 2.7.2+11
 
 environment:
   sdk: '>=3.5.0 <4.0.0'

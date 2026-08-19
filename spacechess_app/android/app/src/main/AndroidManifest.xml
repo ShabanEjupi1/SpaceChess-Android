@@ -12,11 +12,14 @@
         <!-- 🚨 Pa këtë identifikues aplikacioni RRËZOHET në nisje me një
              përjashtim të qartë nga SDK-ja e reklamave — jo në heshtje, ndaj
              s'ka si të kalojë pa u vënë re.
-             ⚠️ Ky është i shahut (`~3928973421`), NUK është i Tokërrgjikut
-             (`~3673667026`): e njëjta llogari AdMob, dy aplikacione. -->
+             ⚠️ Ky është i shahut (`~7492887292`), NUK është i Tokërrgjikut
+             (`~9753001043`): e njëjta llogari AdMob, dy aplikacione.
+             🚨 Botuesi `pub-8491001524308476` është i DYTI: i pari
+             (`pub-1776059573171352`) u refuzua, dhe njësitë e tij jepnin
+             zero mbushje pa asnjë gabim. Mos i kthe. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1776059573171352~3928973421"/>
+            android:value="ca-app-pub-8491001524308476~7492887292"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -46,16 +46,16 @@ class Ads {
   /// njëjtën llogari (`~1776059573171352`) por nën aplikacione të ndryshme te
   /// AdMob-i, ndaj identifikuesi i aplikacionit ndryshon: shahu e ka
   /// `~3928973421`, Tokërrgjiku `~3673667026`. Ai i dyti rri te manifesti i tij.
-  static const String _bannerLive = 'ca-app-pub-1776059573171352/2863303764';
-  static const String _interstitialLive = 'ca-app-pub-1776059573171352/9919666700';
-  static const String _rewardedLive = 'ca-app-pub-1776059573171352/1986316301';
+  static const String _bannerLive = 'ca-app-pub-8491001524308476/9897307327';
+  static const String _interstitialLive = 'ca-app-pub-8491001524308476/4860603064';
+  static const String _rewardedLive = 'ca-app-pub-8491001524308476/3052592176';
 
   // Të krijuara te AdMob-i por të PAPËRDORURA me qëllim, sipas politikës «e
   // lehtë». Rrinë të shënuara që të mos rikrijohen dhe që hapja e konsolës me
   // njësi me zero kërkesa të ketë shpjegim:
-  //   app open           ca-app-pub-1776059573171352/6303021172
-  //   native advanced    ca-app-pub-1776059573171352/4256276488
-  //   rewarded interst.  ca-app-pub-1776059573171352/2013256521
+  //   app open           ca-app-pub-8491001524308476/2234439722
+  //   native advanced    ca-app-pub-8491001524308476/4644980642
+  //   rewarded interst.  ca-app-pub-8491001524308476/1767430664
 
   /// Njësitë e provës së Google-it. Kthejnë gjithmonë një reklamë, kudo, dhe
   /// klikimi mbi to nuk numërohet askund.
