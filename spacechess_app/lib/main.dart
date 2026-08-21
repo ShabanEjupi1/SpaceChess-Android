@@ -8,6 +8,7 @@ import 'app/analitika.dart';
 import 'app/orientation.dart';
 import 'app/prefs.dart';
 import 'app/theme.dart';
+import 'app/vleresimi.dart';
 import 'home_page.dart';
 
 Future<void> main() async {
@@ -46,6 +47,9 @@ Future<void> main() async {
   // Matja nis PARA reklamave: një hapje që dështon te formulari i pëlqimit
   // duhet numëruar prapë, përndryshe humbasin pikërisht hapjet problematike.
   unawaited(Analitika.nis());
+  // 🔎 Vetëm numëruesi i hapjeve. Kërkesa e vlerësimit shfaqet te fitorja ose
+  // te enigma e zgjidhur, kurrë këtu. Shih app/vleresimi.dart.
+  unawaited(Vleresimi.nis(versioni: '2.7.2+11'));
   unawaited(Ads.start());
 
   runApp(MatApp(prefs: prefs));

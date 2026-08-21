@@ -31,6 +31,9 @@ dependencies:
   # Reklamat. E gjithë politika — ku shfaqen, sa shpesh, dhe filtrimi halal —
   # rri te `lib/app/ads.dart`, jo e shpërndarë nëpër ekrane.
   google_mobile_ads: ^6.0.0
+  # 🔎 Vlerësimi te Google Play — In-App Review API. Të gjitha rregullat
+  # (kur pyetet, sa shpesh, dhe pse asnjë shpërblim) rrinë te vleresimi.dart.
+  in_app_review: ^2.0.10
 
 dev_dependencies:
   flutter_test:

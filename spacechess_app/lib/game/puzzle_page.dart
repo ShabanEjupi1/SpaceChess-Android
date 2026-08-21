@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:spacechess_engine/spacechess_engine.dart';
 
 import '../app/prefs.dart';
+import '../app/vleresimi.dart';
 import '../app/theme.dart';
 import '../board/board_view.dart';
 import '../data/enigmat.g.dart';
@@ -168,6 +169,8 @@ class _PuzzlePageState extends State<PuzzlePage> {
     unawaited(HapticFeedback.mediumImpact());
     // Numërohet vetëm ajo që u gjet vetë — përndryshe numri nuk thotë asgjë.
     if (!_usedHint) unawaited(widget.prefs.addPuzzleSolved());
+    // 🔎 Enigma u zgjidh — moment i mirë po aq sa një fitore.
+    unawaited(Vleresimi.momentiMire());
   }
 
   /// Ndihma nuk e luan lëvizjen: e ndriçon. Lojtari e shtyp vetë, ndaj e mban

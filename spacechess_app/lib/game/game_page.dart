@@ -6,6 +6,7 @@ import 'package:spacechess_engine/spacechess_engine.dart';
 
 import '../app/ads.dart';
 import '../app/prefs.dart';
+import '../app/vleresimi.dart';
 import '../app/theme.dart';
 import '../board/board_view.dart';
 import '../board/pieces.dart';
@@ -188,13 +189,16 @@ class _GamePageState extends State<GamePage> {
       // lojtarë mbi një ekran nuk ka «ti», ndaj një fitore s'i takon askujt.
       if (widget.vsComputer) {
         final String? r = _game.status.result;
-        unawaited(widget.prefs.recordResult(
-          outcome: r == '1/2-1/2'
-              ? 0
-              : (r == '1-0' ? white : black) == widget.humanColour
-                  ? 1
-                  : -1,
-        ));
+        final int rezultati = r == '1/2-1/2'
+            ? 0
+            : (r == '1-0' ? white : black) == widget.humanColour
+                ? 1
+                : -1;
+        unawaited(widget.prefs.recordResult(outcome: rezultati));
+        // 🔎 Momenti i mirë: lojtari FITOI kundër motorit. Kurrë pas një
+        // humbjeje dhe kurrë pas barazimit — një kërkesë vlerësimi atje merr
+        // pikërisht yllin që nuk duhej. Shih app/vleresimi.dart.
+        if (rezultati == 1) unawaited(Vleresimi.momentiMire());
       }
       _showResult();
       return;
