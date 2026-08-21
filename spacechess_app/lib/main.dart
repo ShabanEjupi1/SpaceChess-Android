@@ -49,7 +49,7 @@ Future<void> main() async {
   unawaited(Analitika.nis());
   // 🔎 Vetëm numëruesi i hapjeve. Kërkesa e vlerësimit shfaqet te fitorja ose
   // te enigma e zgjidhur, kurrë këtu. Shih app/vleresimi.dart.
-  unawaited(Vleresimi.nis(versioni: '2.7.2+11'));
+  unawaited(Vleresimi.nis(versioni: '2.8.0+12'));
   unawaited(Ads.start());
 
   runApp(MatApp(prefs: prefs));
